@@ -38,13 +38,12 @@
         .modal-scroll::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 8px; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 8px; }
         
-        /* إخفاء شريط التمرير للسلايدر الأفقي مع إبقاء وظيفة السحب */
         .hide-scroll-bar {
-            -ms-overflow-style: none;  /* IE and Edge */
-            scrollbar-width: none;  /* Firefox */
+            -ms-overflow-style: none;
+            scrollbar-width: none;
         }
         .hide-scroll-bar::-webkit-scrollbar {
-            display: none; /* Chrome, Safari and Opera */
+            display: none;
         }
     </style>
 </head>
@@ -103,7 +102,6 @@
         <!-- الأقسام الرئيسية -->
         <div id="mainSections" class="hidden space-y-12">
             
-            <!-- 1. قسم أحدث الألعاب (سلايدر) -->
             <section id="latestSection" class="relative">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
@@ -117,7 +115,6 @@
                 <div id="latestGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <!-- 2. قسم الأكثر مبيعاً (سلايدر) -->
             <section id="bestSellersSection" class="relative">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
@@ -131,7 +128,6 @@
                 <div id="bestSellersGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <!-- 3. قسم الاشتراكات (سلايدر) -->
             <section id="subsSection" class="relative">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
@@ -145,7 +141,6 @@
                 <div id="subsGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <!-- 4. قسم تصفح جميع الألعاب (شبكة Grid عادية) -->
             <section id="allGamesSection" class="pt-10 border-t-4 border-[#1a1a1a]">
                 <div class="text-center mb-10">
                     <h3 class="text-3xl md:text-4xl font-black text-white mb-2">تصفح جميع العروض</h3>
@@ -239,6 +234,8 @@
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png"; 
         const WHATSAPP_NUMBER = "962777276992"; 
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i"; 
+        
+        // رابط الشيت (بصيغة CSV)
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         
         // ==========================================
@@ -276,12 +273,32 @@
                     }
 
                     ALL_GAMES = data.filter(row => row.title && row.title.trim() !== "").map((row, index) => {
-                        let originalP = parseFloat(row.originalPrice);
-                        let currentP = parseFloat(row.price);
+                        // تعديل منطق الأسعار كما طلبت
+                        let basePrice = parseFloat(row.originalPrice); // السعر الأساسي أو القديم
+                        let discountedPrice = parseFloat(row.price); // السعر الجديد إذا كان فيه خصم
                         
-                        let discountPerc = 0;
-                        if(originalP && currentP && originalP > currentP) {
-                            discountPerc = Math.round(((originalP - currentP) / originalP) * 100);
+                        let finalP = 0;
+                        let oldP = null;
+                        let dPerc = 0;
+
+                        if (!isNaN(basePrice)) {
+                            // إذا كان في سعر بالخانة الأساسية originalPrice
+                            if (!isNaN(discountedPrice) && discountedPrice > 0 && discountedPrice < basePrice) {
+                                // وفيه سعر جديد (خصم) والجديد أقل من الأساسي
+                                finalP = discountedPrice;
+                                oldP = basePrice;
+                                dPerc = Math.round(((basePrice - discountedPrice) / basePrice) * 100);
+                            } else {
+                                // ما في سعر جديد، أو السعر الجديد أكبر من الأساسي (خطأ بالإدخال)، بنعتمد الأساسي
+                                finalP = basePrice;
+                                oldP = null;
+                                dPerc = 0;
+                            }
+                        } else if (!isNaN(discountedPrice)) {
+                            // لو بالغلط حط السعر بخانة price وخلى originalPrice فاضي، بنعرضه كسعر أساسي بدون خصم
+                            finalP = discountedPrice;
+                            oldP = null;
+                            dPerc = 0;
                         }
 
                         let clicks = parseInt(localStorage.getItem('game_clicks_' + index)) || Math.floor(Math.random() * 10);
@@ -289,9 +306,9 @@
                         return {
                             id: index,
                             title: row.title,
-                            price: currentP || 0,
-                            originalPrice: originalP || null,
-                            discountPercent: discountPerc,
+                            price: finalP,
+                            originalPrice: oldP,
+                            discountPercent: dPerc,
                             type: row.type || "",
                             region: row.region || "",
                             image: row.image || "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800",
@@ -318,7 +335,6 @@
             });
         }
 
-        // تم إضافة متغير isSlider للكاردز لتعمل بشكل صحيح في السلايدر
         function generateCardHTML(game, isSlider = false) {
             const discountBadge = game.discountPercent > 0 
                 ? `<div class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">خصم ${game.discountPercent}%</div>` 
@@ -331,7 +347,6 @@
             const typeTag = game.type ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-1"></i>${game.type}</span>` : '';
             const regionTag = game.region ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-globe text-blue-500 ml-1"></i>${game.region}</span>` : '';
 
-            // إذا كانت داخل السلايدر، نعطيها عرض ثابت ونفعل خاصية Snap
             const sliderClasses = isSlider ? 'flex-none w-[85vw] sm:w-[320px] snap-start' : '';
 
             return `
@@ -368,7 +383,6 @@
         function distributeGames() {
             document.getElementById('mainSections').classList.remove('hidden');
             
-            // توزيع الألعاب للسلايدرات (isSlider = true)
             const latestGames = ALL_GAMES.filter(g => g.isNew);
             document.getElementById('latestGrid').innerHTML = latestGames.length ? latestGames.map(g => generateCardHTML(g, true)).join('') : '<p class="text-gray-500 px-4">لا يوجد ألعاب حديثة مضافة حالياً.</p>';
             if(latestGames.length === 0) document.getElementById('latestSection').style.display = 'none';
@@ -384,16 +398,12 @@
                 document.getElementById('subsGrid').innerHTML = subGames.map(g => generateCardHTML(g, true)).join('');
             }
 
-            // تصفح جميع الألعاب (شبكة عادية - isSlider = false)
             renderAllGamesPage(1);
         }
 
-        // دالة تحريك السلايدر يمين ويسار بالأسهم
         function scrollSlider(sliderId, direction) {
             const slider = document.getElementById(sliderId);
-            // مقدار السحب = عرض الكارد تقريباً للكمبيوتر
             const scrollAmount = 340; 
-            // بما أن الموقع من اليمين لليسار RTL (السالب يسار، الموجب يمين)
             if (direction === 'left') {
                 slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
             } else {
@@ -407,7 +417,6 @@
             const endIndex = startIndex + itemsPerPage;
             
             const gamesToShow = ALL_GAMES.slice(startIndex, endIndex);
-            // إرسال false لأن هذا القسم Grid وليس سلايدر
             document.getElementById('allGamesGrid').innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
             
             renderPaginationControls();
@@ -459,7 +468,6 @@
             } else {
                 noRes.classList.add('hidden');
                 searchGrid.classList.remove('hidden');
-                // في البحث نعرضها كـ Grid وليس سلايدر
                 searchGrid.innerHTML = filtered.map(g => generateCardHTML(g, false)).join('');
             }
         }
