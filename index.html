@@ -37,6 +37,15 @@
         .modal-scroll::-webkit-scrollbar { width: 8px; }
         .modal-scroll::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 8px; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 8px; }
+        
+        /* إخفاء شريط التمرير للسلايدر الأفقي مع إبقاء وظيفة السحب */
+        .hide-scroll-bar {
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        .hide-scroll-bar::-webkit-scrollbar {
+            display: none; /* Chrome, Safari and Opera */
+        }
     </style>
 </head>
 <body class="antialiased selection:bg-xbox-main selection:text-white pb-20">
@@ -92,38 +101,51 @@
         </div>
 
         <!-- الأقسام الرئيسية -->
-        <div id="mainSections" class="hidden space-y-16">
+        <div id="mainSections" class="hidden space-y-12">
             
-            <section id="latestSection">
-                <div class="flex items-center justify-between mb-8 border-b border-[#2a2a2a] pb-4">
+            <!-- 1. قسم أحدث الألعاب (سلايدر) -->
+            <section id="latestSection" class="relative">
+                <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-fire text-orange-500"></i> أحدث الألعاب
                     </h3>
-                    <button id="btnMoreLatest" onclick="toggleViewMore('latestGrid', 'btnMoreLatest')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
+                    <div class="hidden sm:flex gap-2">
+                        <button onclick="scrollSlider('latestGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="scrollSlider('latestGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    </div>
                 </div>
-                <div id="latestGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-hidden" style="max-height: 420px; transition: max-height 0.5s ease;"></div>
+                <div id="latestGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <section id="bestSellersSection">
-                <div class="flex items-center justify-between mb-8 border-b border-[#2a2a2a] pb-4">
+            <!-- 2. قسم الأكثر مبيعاً (سلايدر) -->
+            <section id="bestSellersSection" class="relative">
+                <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-crown text-yellow-500"></i> الأكثر مبيعاً
                     </h3>
-                    <button id="btnMoreBest" onclick="toggleViewMore('bestSellersGrid', 'btnMoreBest')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
+                    <div class="hidden sm:flex gap-2">
+                        <button onclick="scrollSlider('bestSellersGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="scrollSlider('bestSellersGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    </div>
                 </div>
-                <div id="bestSellersGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-hidden" style="max-height: 420px; transition: max-height 0.5s ease;"></div>
+                <div id="bestSellersGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <section id="subsSection">
-                <div class="flex items-center justify-between mb-8 border-b border-[#2a2a2a] pb-4">
+            <!-- 3. قسم الاشتراكات (سلايدر) -->
+            <section id="subsSection" class="relative">
+                <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-ticket text-blue-500"></i> الاشتراكات
                     </h3>
-                    <button id="btnMoreSubs" onclick="toggleViewMore('subsGrid', 'btnMoreSubs')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
+                    <div class="hidden sm:flex gap-2">
+                        <button onclick="scrollSlider('subsGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
+                        <button onclick="scrollSlider('subsGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    </div>
                 </div>
-                <div id="subsGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 overflow-hidden" style="max-height: 420px; transition: max-height 0.5s ease;"></div>
+                <div id="subsGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
+            <!-- 4. قسم تصفح جميع الألعاب (شبكة Grid عادية) -->
             <section id="allGamesSection" class="pt-10 border-t-4 border-[#1a1a1a]">
                 <div class="text-center mb-10">
                     <h3 class="text-3xl md:text-4xl font-black text-white mb-2">تصفح جميع العروض</h3>
@@ -135,6 +157,7 @@
 
         </div>
 
+        <!-- شبكة نتائج البحث -->
         <div id="searchResultsGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"></div>
 
     </main>
@@ -155,7 +178,6 @@
             <div class="md:w-3/5 p-6 md:p-10 flex flex-col overflow-y-auto modal-scroll">
                 <h3 id="modalTitle" class="text-2xl md:text-3xl font-black text-white mb-3"></h3>
                 
-                <!-- التاجات الخاصة بالريجون والنوع في المودال -->
                 <div class="flex flex-wrap gap-2 mb-6" id="modalTags"></div>
                 
                 <div class="mb-6">
@@ -217,8 +239,6 @@
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png"; 
         const WHATSAPP_NUMBER = "962777276992"; 
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i"; 
-        
-        // رابط الشيت (بصيغة CSV)
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         
         // ==========================================
@@ -273,7 +293,7 @@
                             originalPrice: originalP || null,
                             discountPercent: discountPerc,
                             type: row.type || "",
-                            region: row.region || "", // تمت إضافة الريجون
+                            region: row.region || "",
                             image: row.image || "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800",
                             features: row.features ? row.features.split('|') : ["تفعيل فوري"],
                             description: row.description || "",
@@ -298,7 +318,8 @@
             });
         }
 
-        function generateCardHTML(game) {
+        // تم إضافة متغير isSlider للكاردز لتعمل بشكل صحيح في السلايدر
+        function generateCardHTML(game, isSlider = false) {
             const discountBadge = game.discountPercent > 0 
                 ? `<div class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">خصم ${game.discountPercent}%</div>` 
                 : '';
@@ -307,13 +328,15 @@
                 ? `<span class="text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` 
                 : '';
                 
-            // التاجات على الكارد من الخارج
             const typeTag = game.type ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-1"></i>${game.type}</span>` : '';
             const regionTag = game.region ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-globe text-blue-500 ml-1"></i>${game.region}</span>` : '';
 
+            // إذا كانت داخل السلايدر، نعطيها عرض ثابت ونفعل خاصية Snap
+            const sliderClasses = isSlider ? 'flex-none w-[85vw] sm:w-[320px] snap-start' : '';
+
             return `
-                <div class="game-card bg-[#141414] rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer" onclick="openModal(${game.id})">
-                    <div class="relative h-56 overflow-hidden">
+                <div class="game-card bg-[#141414] rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses}" onclick="openModal(${game.id})">
+                    <div class="relative h-56 overflow-hidden shrink-0">
                         <img src="${game.image}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300">
                         ${discountBadge}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent"></div>
@@ -345,36 +368,36 @@
         function distributeGames() {
             document.getElementById('mainSections').classList.remove('hidden');
             
+            // توزيع الألعاب للسلايدرات (isSlider = true)
             const latestGames = ALL_GAMES.filter(g => g.isNew);
-            document.getElementById('latestGrid').innerHTML = latestGames.length ? latestGames.map(generateCardHTML).join('') : '<p class="text-gray-500 col-span-full">لا يوجد ألعاب حديثة مضافة حالياً.</p>';
-            if(latestGames.length <= 4) document.getElementById('btnMoreLatest').style.display = 'none';
+            document.getElementById('latestGrid').innerHTML = latestGames.length ? latestGames.map(g => generateCardHTML(g, true)).join('') : '<p class="text-gray-500 px-4">لا يوجد ألعاب حديثة مضافة حالياً.</p>';
+            if(latestGames.length === 0) document.getElementById('latestSection').style.display = 'none';
 
             const sortedBest = [...ALL_GAMES].sort((a, b) => b.clicks - a.clicks).slice(0, 20);
-            document.getElementById('bestSellersGrid').innerHTML = sortedBest.map(generateCardHTML).join('');
-            if(sortedBest.length <= 4) document.getElementById('btnMoreBest').style.display = 'none';
+            document.getElementById('bestSellersGrid').innerHTML = sortedBest.map(g => generateCardHTML(g, true)).join('');
+            if(sortedBest.length === 0) document.getElementById('bestSellersSection').style.display = 'none';
 
             const subGames = ALL_GAMES.filter(g => g.type.includes('اشتراك'));
             if(subGames.length === 0) {
                 document.getElementById('subsSection').style.display = 'none';
             } else {
-                document.getElementById('subsGrid').innerHTML = subGames.map(generateCardHTML).join('');
-                if(subGames.length <= 4) document.getElementById('btnMoreSubs').style.display = 'none';
+                document.getElementById('subsGrid').innerHTML = subGames.map(g => generateCardHTML(g, true)).join('');
             }
 
+            // تصفح جميع الألعاب (شبكة عادية - isSlider = false)
             renderAllGamesPage(1);
         }
 
-        function toggleViewMore(gridId, btnId) {
-            const grid = document.getElementById(gridId);
-            const btn = document.getElementById(btnId);
-            
-            if (grid.style.maxHeight === '420px') {
-                grid.style.maxHeight = '2000px'; 
-                btn.innerText = 'عرض أقل';
+        // دالة تحريك السلايدر يمين ويسار بالأسهم
+        function scrollSlider(sliderId, direction) {
+            const slider = document.getElementById(sliderId);
+            // مقدار السحب = عرض الكارد تقريباً للكمبيوتر
+            const scrollAmount = 340; 
+            // بما أن الموقع من اليمين لليسار RTL (السالب يسار، الموجب يمين)
+            if (direction === 'left') {
+                slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
             } else {
-                grid.style.maxHeight = '420px';
-                btn.innerText = 'عرض المزيد';
-                grid.parentElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
             }
         }
 
@@ -384,7 +407,8 @@
             const endIndex = startIndex + itemsPerPage;
             
             const gamesToShow = ALL_GAMES.slice(startIndex, endIndex);
-            document.getElementById('allGamesGrid').innerHTML = gamesToShow.map(generateCardHTML).join('');
+            // إرسال false لأن هذا القسم Grid وليس سلايدر
+            document.getElementById('allGamesGrid').innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
             
             renderPaginationControls();
         }
@@ -435,7 +459,8 @@
             } else {
                 noRes.classList.add('hidden');
                 searchGrid.classList.remove('hidden');
-                searchGrid.innerHTML = filtered.map(generateCardHTML).join('');
+                // في البحث نعرضها كـ Grid وليس سلايدر
+                searchGrid.innerHTML = filtered.map(g => generateCardHTML(g, false)).join('');
             }
         }
 
@@ -452,7 +477,6 @@
             document.getElementById('modalPrice').textContent = game.price;
             document.getElementById('modalOriginalPrice').textContent = game.originalPrice ? `${game.originalPrice} JOD` : '';
 
-            // التاجات في المودال (النوع والريجون)
             let tagsHtml = '';
             if (game.type) tagsHtml += `<span class="inline-flex items-center gap-1.5 text-sm font-bold bg-[#1a1a1a] text-xbox-light px-3 py-1.5 rounded-xl border border-xbox-main/30"><i class="fa-solid fa-key"></i> ${game.type}</span>`;
             if (game.region) tagsHtml += `<span class="inline-flex items-center gap-1.5 text-sm font-bold bg-[#1a1a1a] text-blue-400 px-3 py-1.5 rounded-xl border border-blue-900/30"><i class="fa-solid fa-globe"></i> ${game.region}</span>`;
@@ -492,5 +516,6 @@
         window.onload = fetchGames;
     </script>
 </body>
-
 </html>
+
+
