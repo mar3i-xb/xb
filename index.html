@@ -37,23 +37,23 @@
         .modal-scroll::-webkit-scrollbar { width: 8px; }
         .modal-scroll::-webkit-scrollbar-track { background: #1a1a1a; border-radius: 8px; }
         .modal-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 8px; }
-        
-        .hide-scroll-bar {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-        }
-        .hide-scroll-bar::-webkit-scrollbar {
-            display: none;
-        }
+        .hide-scroll-bar { -ms-overflow-style: none; scrollbar-width: none; }
+        .hide-scroll-bar::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="antialiased selection:bg-xbox-main selection:text-white pb-20">
+
+    <!-- إشعار النسخ الذكي (Toast) -->
+    <div id="copyToast" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-[#0084FF] text-white px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none -translate-y-10 border border-blue-400/30">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span class="font-bold text-sm whitespace-nowrap">تم نسخ التفاصيل! الصقها في المحادثة 📝</span>
+    </div>
 
     <!-- Navbar -->
     <nav class="bg-black/80 border-b border-xbox-dark/30 sticky top-0 z-40 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
-                <div class="flex items-center gap-3 cursor-pointer" onclick="window.scrollTo(0,0)">
+                <div class="flex items-center gap-3 cursor-pointer" onclick="goHome()">
                     <img id="storeLogo" src="" alt="Mar3i-XB Logo" class="h-10 md:h-12 object-contain" onerror="this.outerHTML='<span class=\'text-3xl font-black text-white italic\'>Mar3i-<span class=\'text-xbox-main\'>XB</span></span>'">
                 </div>
             </div>
@@ -61,7 +61,7 @@
     </nav>
 
     <!-- Hero Section -->
-    <div class="relative overflow-hidden">
+    <div class="relative overflow-hidden" id="heroSection">
         <div class="glow-bg"></div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 relative z-10 text-center">
             <h2 class="text-4xl md:text-6xl font-black text-white mb-6 leading-tight">
@@ -82,21 +82,30 @@
 
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         
-        <!-- حالة التحميل والأخطاء -->
+        <!-- التحميل والأخطاء -->
         <div id="loadingState" class="text-center py-20">
             <div class="loader mb-4"></div>
             <p class="text-gray-400 font-bold">جاري تحميل العروض...</p>
         </div>
-
         <div id="errorState" class="hidden text-center py-16 px-4 bg-red-900/20 rounded-3xl border border-red-500/30">
             <i class="fa-solid fa-triangle-exclamation text-5xl text-red-500 mb-4"></i>
             <h4 id="errorMessage" class="text-xl font-bold text-red-400 mb-2">حدث خطأ</h4>
             <p id="errorHint" class="text-gray-300">تأكد من إعدادات الرابط.</p>
         </div>
-
         <div id="noResults" class="hidden text-center py-20 bg-[#141414] rounded-3xl border border-[#2a2a2a]">
             <i class="fa-solid fa-search text-5xl text-gray-600 mb-4"></i>
             <h4 class="text-2xl font-bold text-gray-300">لا يوجد نتائج</h4>
+        </div>
+
+        <!-- قسم عرض تصنيف محدد -->
+        <div id="categoryView" class="hidden">
+            <div class="flex items-center gap-4 mb-8">
+                <button onclick="goHome()" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors">
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+                <h3 id="categoryTitle" class="text-3xl font-black text-white"></h3>
+            </div>
+            <div id="categoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
         </div>
 
         <!-- الأقسام الرئيسية -->
@@ -107,9 +116,8 @@
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-fire text-orange-500"></i> أحدث الألعاب
                     </h3>
-                    <div class="hidden sm:flex gap-2">
-                        <button onclick="scrollSlider('latestGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button onclick="scrollSlider('latestGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="flex items-center gap-2">
+                        <button id="btnMoreLatest" onclick="showCategory('latest')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                     </div>
                 </div>
                 <div id="latestGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
@@ -120,9 +128,8 @@
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-crown text-yellow-500"></i> الأكثر مبيعاً
                     </h3>
-                    <div class="hidden sm:flex gap-2">
-                        <button onclick="scrollSlider('bestSellersGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button onclick="scrollSlider('bestSellersGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="flex items-center gap-2">
+                        <button id="btnMoreBest" onclick="showCategory('best')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                     </div>
                 </div>
                 <div id="bestSellersGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
@@ -133,9 +140,8 @@
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-ticket text-blue-500"></i> الاشتراكات
                     </h3>
-                    <div class="hidden sm:flex gap-2">
-                        <button onclick="scrollSlider('subsGrid', 'right')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-right"></i></button>
-                        <button onclick="scrollSlider('subsGrid', 'left')" class="w-10 h-10 rounded-xl bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="flex items-center gap-2">
+                        <button id="btnMoreSubs" onclick="showCategory('subs')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                     </div>
                 </div>
                 <div id="subsGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
@@ -152,7 +158,6 @@
 
         </div>
 
-        <!-- شبكة نتائج البحث -->
         <div id="searchResultsGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"></div>
 
     </main>
@@ -161,7 +166,7 @@
     <div id="gameModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-4xl rounded-[2rem] shadow-2xl relative flex flex-col md:flex-row max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
             
-            <button onclick="closeModal()" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black w-10 h-10 flex items-center justify-center rounded-full transition-colors backdrop-blur-sm z-20">
+            <button onclick="closeModalBtn()" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black w-10 h-10 flex items-center justify-center rounded-full transition-colors backdrop-blur-sm z-20">
                 <i class="fa-solid fa-xmark text-xl"></i>
             </button>
             
@@ -218,7 +223,7 @@
 
     <!-- أزرار عائمة -->
     <div class="fixed bottom-6 right-6 z-40 flex flex-col gap-3">
-        <button onclick="window.open(MESSENGER_LINK, '_blank')" class="bg-[#0084FF] text-white w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-all flex items-center justify-center">
+        <button onclick="openMessengerGeneral()" class="bg-[#0084FF] text-white w-14 h-14 rounded-full shadow-lg hover:scale-110 transition-all flex items-center justify-center">
             <i class="fa-brands fa-facebook-messenger text-3xl"></i>
         </button>
         <button onclick="window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')" class="bg-[#25D366] text-white w-14 h-14 rounded-full shadow-[0_10px_25px_rgba(37,211,102,0.4)] hover:scale-110 transition-all flex items-center justify-center">
@@ -234,13 +239,15 @@
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png"; 
         const WHATSAPP_NUMBER = "962777276992"; 
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i"; 
-        
-        // رابط الشيت (بصيغة CSV)
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         
         // ==========================================
 
         let ALL_GAMES = [];
+        let LATEST_GAMES = [];
+        let BEST_GAMES = [];
+        let SUBS_GAMES = [];
+        
         let currentPage = 1;
         const itemsPerPage = 20;
 
@@ -266,39 +273,26 @@
                 header: true,
                 complete: function(results) {
                     const data = results.data;
-                    
                     if (data.length > 0 && data[0] && Object.values(data[0]).join("").includes("<!DOCTYPE html>")) {
                         showError("تم وضع رابط التعديل!", "يجب نشر الملف من (ملف > مشاركة > نشر على الويب > CSV).");
                         return;
                     }
 
                     ALL_GAMES = data.filter(row => row.title && row.title.trim() !== "").map((row, index) => {
-                        // تعديل منطق الأسعار كما طلبت
-                        let basePrice = parseFloat(row.originalPrice); // السعر الأساسي أو القديم
-                        let discountedPrice = parseFloat(row.price); // السعر الجديد إذا كان فيه خصم
+                        let basePrice = parseFloat(row.originalPrice);
+                        let discountedPrice = parseFloat(row.price);
                         
-                        let finalP = 0;
-                        let oldP = null;
-                        let dPerc = 0;
+                        let finalP = 0; let oldP = null; let dPerc = 0;
 
                         if (!isNaN(basePrice)) {
-                            // إذا كان في سعر بالخانة الأساسية originalPrice
                             if (!isNaN(discountedPrice) && discountedPrice > 0 && discountedPrice < basePrice) {
-                                // وفيه سعر جديد (خصم) والجديد أقل من الأساسي
-                                finalP = discountedPrice;
-                                oldP = basePrice;
+                                finalP = discountedPrice; oldP = basePrice;
                                 dPerc = Math.round(((basePrice - discountedPrice) / basePrice) * 100);
                             } else {
-                                // ما في سعر جديد، أو السعر الجديد أكبر من الأساسي (خطأ بالإدخال)، بنعتمد الأساسي
-                                finalP = basePrice;
-                                oldP = null;
-                                dPerc = 0;
+                                finalP = basePrice; oldP = null; dPerc = 0;
                             }
                         } else if (!isNaN(discountedPrice)) {
-                            // لو بالغلط حط السعر بخانة price وخلى originalPrice فاضي، بنعرضه كسعر أساسي بدون خصم
-                            finalP = discountedPrice;
-                            oldP = null;
-                            dPerc = 0;
+                            finalP = discountedPrice; oldP = null; dPerc = 0;
                         }
 
                         let clicks = parseInt(localStorage.getItem('game_clicks_' + index)) || Math.floor(Math.random() * 10);
@@ -327,6 +321,11 @@
                     }
 
                     document.getElementById('errorState').classList.add('hidden');
+                    
+                    LATEST_GAMES = ALL_GAMES.filter(g => g.isNew);
+                    BEST_GAMES = [...ALL_GAMES].sort((a, b) => b.clicks - a.clicks).slice(0, 20); 
+                    SUBS_GAMES = ALL_GAMES.filter(g => g.type.includes('اشتراك'));
+
                     distributeGames();
                 },
                 error: function(err) {
@@ -339,11 +338,7 @@
             const discountBadge = game.discountPercent > 0 
                 ? `<div class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg">خصم ${game.discountPercent}%</div>` 
                 : '';
-                
-            const originalPriceStr = game.originalPrice 
-                ? `<span class="text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` 
-                : '';
-                
+            const originalPriceStr = game.originalPrice ? `<span class="text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
             const typeTag = game.type ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-1"></i>${game.type}</span>` : '';
             const regionTag = game.region ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-globe text-blue-500 ml-1"></i>${game.region}</span>` : '';
 
@@ -358,12 +353,7 @@
                     </div>
                     <div class="p-5 flex-grow flex flex-col -mt-8 relative z-10">
                         <h4 class="text-lg font-black text-white mb-2 line-clamp-2 leading-tight">${game.title}</h4>
-                        
-                        <div class="flex flex-wrap gap-1.5 mb-2">
-                            ${typeTag}
-                            ${regionTag}
-                        </div>
-                        
+                        <div class="flex flex-wrap gap-1.5 mb-2">${typeTag}${regionTag}</div>
                         <div class="mt-auto pt-3 border-t border-[#2a2a2a] flex items-center justify-between">
                             <div>
                                 ${originalPriceStr}
@@ -374,7 +364,7 @@
                             </div>
                             <button class="bg-[#1a1a1a] border border-[#333] hover:border-xbox-main text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left text-sm"></i></button>
                         </div>
-                        <div class="text-[11px] text-gray-500 mt-3 flex items-center gap-1 bg-[#1a1a1a] p-1.5 rounded"><i class="fa-solid fa-circle-info text-xbox-dark"></i> طريقة التفعيل يتم تحديدها عند التواصل</div>
+                        <div class="text-[11px] text-gray-500 mt-3 flex items-center gap-1 bg-[#1a1a1a] p-1.5 rounded"><i class="fa-solid fa-circle-info text-xbox-dark"></i> التفعيل عند التواصل</div>
                     </div>
                 </div>
             `;
@@ -383,65 +373,79 @@
         function distributeGames() {
             document.getElementById('mainSections').classList.remove('hidden');
             
-            const latestGames = ALL_GAMES.filter(g => g.isNew);
-            document.getElementById('latestGrid').innerHTML = latestGames.length ? latestGames.map(g => generateCardHTML(g, true)).join('') : '<p class="text-gray-500 px-4">لا يوجد ألعاب حديثة مضافة حالياً.</p>';
-            if(latestGames.length === 0) document.getElementById('latestSection').style.display = 'none';
+            document.getElementById('latestGrid').innerHTML = LATEST_GAMES.length ? LATEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('') : '<p class="text-gray-500 px-4">لا يوجد ألعاب حديثة مضافة حالياً.</p>';
+            if(LATEST_GAMES.length <= 8) document.getElementById('btnMoreLatest').style.display = 'none';
 
-            const sortedBest = [...ALL_GAMES].sort((a, b) => b.clicks - a.clicks).slice(0, 20);
-            document.getElementById('bestSellersGrid').innerHTML = sortedBest.map(g => generateCardHTML(g, true)).join('');
-            if(sortedBest.length === 0) document.getElementById('bestSellersSection').style.display = 'none';
+            document.getElementById('bestSellersGrid').innerHTML = BEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
+            if(BEST_GAMES.length <= 8) document.getElementById('btnMoreBest').style.display = 'none';
 
-            const subGames = ALL_GAMES.filter(g => g.type.includes('اشتراك'));
-            if(subGames.length === 0) {
+            if(SUBS_GAMES.length === 0) {
                 document.getElementById('subsSection').style.display = 'none';
             } else {
-                document.getElementById('subsGrid').innerHTML = subGames.map(g => generateCardHTML(g, true)).join('');
+                document.getElementById('subsGrid').innerHTML = SUBS_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
+                if(SUBS_GAMES.length <= 8) document.getElementById('btnMoreSubs').style.display = 'none';
             }
 
             renderAllGamesPage(1);
         }
 
-        function scrollSlider(sliderId, direction) {
-            const slider = document.getElementById(sliderId);
-            const scrollAmount = 340; 
-            if (direction === 'left') {
-                slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            } else {
-                slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+        function goHome() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('searchResultsGrid').classList.add('hidden');
+            document.getElementById('noResults').classList.add('hidden');
+            document.getElementById('categoryView').classList.add('hidden');
+            document.getElementById('mainSections').classList.remove('hidden');
+            
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function showCategory(catType) {
+            document.getElementById('mainSections').classList.add('hidden');
+            document.getElementById('searchResultsGrid').classList.add('hidden');
+            document.getElementById('noResults').classList.add('hidden');
+            
+            const catView = document.getElementById('categoryView');
+            const catTitle = document.getElementById('categoryTitle');
+            const catGrid = document.getElementById('categoryGrid');
+            
+            catView.classList.remove('hidden');
+            
+            let gamesToShow = [];
+            if(catType === 'latest') {
+                catTitle.innerText = "أحدث الألعاب";
+                gamesToShow = LATEST_GAMES;
+            } else if (catType === 'best') {
+                catTitle.innerText = "الأكثر مبيعاً";
+                gamesToShow = BEST_GAMES;
+            } else if (catType === 'subs') {
+                catTitle.innerText = "الاشتراكات";
+                gamesToShow = SUBS_GAMES;
             }
+
+            catGrid.innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
+            window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
         function renderAllGamesPage(page) {
             currentPage = page;
             const startIndex = (page - 1) * itemsPerPage;
             const endIndex = startIndex + itemsPerPage;
-            
             const gamesToShow = ALL_GAMES.slice(startIndex, endIndex);
-            document.getElementById('allGamesGrid').innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
             
+            document.getElementById('allGamesGrid').innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
             renderPaginationControls();
         }
 
         function renderPaginationControls() {
             const totalPages = Math.ceil(ALL_GAMES.length / itemsPerPage);
             const controlsContainer = document.getElementById('paginationControls');
-            
-            if (totalPages <= 1) {
-                controlsContainer.innerHTML = '';
-                return;
-            }
+            if (totalPages <= 1) { controlsContainer.innerHTML = ''; return; }
 
             let html = '';
-            if (currentPage > 1) {
-                html += `<button onclick="renderAllGamesPage(${currentPage - 1}); document.getElementById('allGamesSection').scrollIntoView({behavior: 'smooth'})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all"><i class="fa-solid fa-chevron-right ml-1"></i> السابق</button>`;
-            }
-
+            if (currentPage > 1) html += `<button onclick="renderAllGamesPage(${currentPage - 1}); document.getElementById('allGamesSection').scrollIntoView({behavior: 'smooth'})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all"><i class="fa-solid fa-chevron-right ml-1"></i> السابق</button>`;
             html += `<span class="text-gray-400 font-bold px-4 py-2 bg-[#141414] border border-[#2a2a2a] rounded-xl">صفحة ${currentPage} من ${totalPages}</span>`;
-
-            if (currentPage < totalPages) {
-                html += `<button onclick="renderAllGamesPage(${currentPage + 1}); document.getElementById('allGamesSection').scrollIntoView({behavior: 'smooth'})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all">التالي <i class="fa-solid fa-chevron-left mr-1"></i></button>`;
-            }
-
+            if (currentPage < totalPages) html += `<button onclick="renderAllGamesPage(${currentPage + 1}); document.getElementById('allGamesSection').scrollIntoView({behavior: 'smooth'})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all">التالي <i class="fa-solid fa-chevron-left mr-1"></i></button>`;
+            
             controlsContainer.innerHTML = html;
         }
 
@@ -450,6 +454,9 @@
             const mainSections = document.getElementById('mainSections');
             const searchGrid = document.getElementById('searchResultsGrid');
             const noRes = document.getElementById('noResults');
+            const catView = document.getElementById('categoryView');
+
+            catView.classList.add('hidden');
 
             if (query === "") {
                 mainSections.classList.remove('hidden');
@@ -459,7 +466,6 @@
             }
 
             mainSections.classList.add('hidden');
-            
             const filtered = ALL_GAMES.filter(game => game.title.toLowerCase().includes(query));
             
             if (filtered.length === 0) {
@@ -471,6 +477,48 @@
                 searchGrid.innerHTML = filtered.map(g => generateCardHTML(g, false)).join('');
             }
         }
+
+        // ==========================================
+        // وظيفة النسخ الذكي للماسنجر
+        // ==========================================
+        function showToastMessage() {
+            const toast = document.getElementById('copyToast');
+            toast.classList.remove('opacity-0', '-translate-y-10', 'pointer-events-none');
+            toast.classList.add('opacity-100', 'translate-y-0');
+            
+            setTimeout(() => {
+                toast.classList.remove('opacity-100', 'translate-y-0');
+                toast.classList.add('opacity-0', '-translate-y-10', 'pointer-events-none');
+            }, 3000); // يختفي بعد 3 ثواني
+        }
+
+        function smartCopyAndOpenMessenger(messageText) {
+            // عمل عنصر مخفي لنسخ النص منه لضمان عمله على كل الهواتف
+            const textArea = document.createElement("textarea");
+            textArea.value = messageText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            
+            try {
+                document.execCommand('copy');
+                showToastMessage(); // إظهار إشعار النسخ
+                
+                // فتح الماسنجر بعد ثانية وربع ليعطيه فرصة يقرأ الإشعار
+                setTimeout(() => {
+                    window.open(MESSENGER_LINK, '_blank');
+                }, 1200);
+            } catch (err) {
+                // إذا فشل النسخ لأي سبب تقني، افتح الماسنجر مباشرة
+                window.open(MESSENGER_LINK, '_blank');
+            }
+            
+            document.body.removeChild(textArea);
+        }
+        
+        function openMessengerGeneral() {
+            smartCopyAndOpenMessenger("مرحباً، لدي استفسار بخصوص متجر الألعاب الخاص بكم.");
+        }
+        // ==========================================
 
         function openModal(gameId) {
             const game = ALL_GAMES.find(g => g.id === gameId);
@@ -494,11 +542,27 @@
                 <li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-xbox-main shrink-0"></i> <span>${f}</span></li>
             `).join('');
 
-            const buyMsg = `مرحباً، أريد شراء: ${game.title} %0Aالسعر: ${game.price} دينار.`;
+            // تحضير رسالة الواتساب والماسنجر
+            let extraInfo = '';
+            if(game.type) extraInfo += `%0Aالنوع: ${game.type}`;
+            if(game.region) extraInfo += `%0Aالريجون: ${game.region}`;
+            const buyMsg = `مرحباً، أريد شراء: *${game.title}*%0Aالسعر: ${game.price} دينار.${extraInfo}`;
             
-            document.getElementById('modalBuyBtn').onclick = () => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buyMsg}`, '_blank');
-            document.getElementById('modalMessengerBtn').onclick = () => window.open(MESSENGER_LINK, '_blank');
+            // رسالة الماسنجر العادية (بدون %0A لأننا سننسخها كنص عادي)
+            let msgTextPlain = `مرحباً، أريد شراء: ${game.title}\nالسعر: ${game.price} دينار.`;
+            if(game.type) msgTextPlain += `\nالنوع: ${game.type}`;
+            if(game.region) msgTextPlain += `\nالريجون: ${game.region}`;
 
+            document.getElementById('modalBuyBtn').onclick = () => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buyMsg}`, '_blank');
+            
+            // ربط زر الماسنجر بوظيفة النسخ الذكي
+            document.getElementById('modalMessengerBtn').onclick = () => smartCopyAndOpenMessenger(msgTextPlain);
+
+            history.pushState({ modalOpen: true }, '', '#game');
+            showModalDOM();
+        }
+
+        function showModalDOM() {
             const modal = document.getElementById('gameModal');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             setTimeout(() => {
@@ -509,7 +573,7 @@
             document.body.style.overflow = 'hidden';
         }
 
-        function closeModal() {
+        function hideModalDOM() {
             const modal = document.getElementById('gameModal');
             modal.classList.add('opacity-0');
             document.getElementById('modalContent').classList.remove('scale-100');
@@ -517,8 +581,22 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = 'auto'; }, 300);
         }
 
+        function closeModalBtn() {
+            if (window.location.hash === '#game') {
+                history.back(); 
+            } else {
+                hideModalDOM();
+            }
+        }
+
+        window.addEventListener('popstate', function(event) {
+            if (window.location.hash !== '#game') {
+                hideModalDOM();
+            }
+        });
+
         document.getElementById('gameModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
+            if (e.target === this) closeModalBtn();
         });
 
         window.onload = fetchGames;
