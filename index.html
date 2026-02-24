@@ -40,7 +40,6 @@
         .hide-scroll-bar { -ms-overflow-style: none; scrollbar-width: none; }
         .hide-scroll-bar::-webkit-scrollbar { display: none; }
         
-        /* تأثير اللعبة المنتهية */
         .out-of-stock-card img { filter: grayscale(100%) brightness(0.6); }
     </style>
 </head>
@@ -52,18 +51,17 @@
         <span id="toastText" class="font-bold text-sm whitespace-nowrap">تمت العملية بنجاح!</span>
     </div>
 
-    <!-- Navbar المحدث مع سلة بالهيدر -->
+    <!-- Navbar المحدث -->
     <nav class="bg-black/80 border-b border-xbox-dark/30 sticky top-0 z-40 backdrop-blur-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
-                <!-- اللوجو -->
-                <div class="flex items-center gap-3 cursor-pointer" onclick="goHome(true)">
+                <div class="flex items-center gap-3 cursor-pointer h-full" onclick="goHome(true)">
                     <img id="storeLogo" src="" alt="Mar3i-XB Logo" class="h-8 md:h-12 object-contain" onerror="this.outerHTML='<span class=\'text-3xl font-black text-white italic\'>Mar3i-<span class=\'text-xbox-main\'>XB</span></span>'">
                 </div>
                 
-                <!-- زر السلة في الهيدر (جديد) -->
-                <button onclick="openCart()" class="relative text-gray-300 hover:text-white transition-colors p-2">
-                    <i class="fa-solid fa-basket-shopping text-2xl"></i>
+                <!-- زر السلة في الهيدر مصغر ومتوازي -->
+                <button onclick="openCart()" class="relative flex items-center justify-center text-gray-300 hover:text-white transition-colors p-2 mt-1">
+                    <i class="fa-solid fa-basket-shopping text-xl md:text-2xl"></i>
                     <span id="headerCartBadge" class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden">0</span>
                 </button>
             </div>
@@ -113,7 +111,8 @@
                 </button>
                 <h3 id="categoryTitle" class="text-3xl font-black text-white"></h3>
             </div>
-            <div id="categoryGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
+            <!-- شبكة الفئات المخصصة (تدعم مربعين عالموبايل) -->
+            <div id="categoryGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6"></div>
         </div>
 
         <div id="mainSections" class="hidden space-y-12">
@@ -124,7 +123,7 @@
                     </h3>
                     <button id="btnMoreLatest" onclick="showCategory('latest')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                 </div>
-                <div id="latestGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="latestGrid" class="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
             <section id="bestSellersSection" class="relative">
@@ -134,7 +133,7 @@
                     </h3>
                     <button id="btnMoreBest" onclick="showCategory('best')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                 </div>
-                <div id="bestSellersGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="bestSellersGrid" class="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
             <section id="subsSection" class="relative">
@@ -144,7 +143,7 @@
                     </h3>
                     <button id="btnMoreSubs" onclick="showCategory('subs')" class="text-xbox-main hover:text-white font-bold text-sm bg-[#1a1a1a] px-4 py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main">عرض المزيد</button>
                 </div>
-                <div id="subsGrid" class="flex overflow-x-auto gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="subsGrid" class="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
             <section id="allGamesSection" class="pt-10 border-t-4 border-[#1a1a1a]">
@@ -152,12 +151,14 @@
                     <h3 class="text-3xl md:text-4xl font-black text-white mb-2">تصفح جميع العروض</h3>
                     <p class="text-gray-500">أحدث الإضافات تظهر أولاً</p>
                 </div>
-                <div id="allGamesGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"></div>
-                <div id="paginationControls" class="flex items-center justify-center gap-4 mt-12"></div>
+                <!-- شبكة جميع العروض (تدعم مربعين عالموبايل) -->
+                <div id="allGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6"></div>
+                <div id="paginationControls" class="flex items-center justify-center gap-2 sm:gap-4 mt-12"></div>
             </section>
         </div>
 
-        <div id="searchResultsGrid" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mt-8"></div>
+        <!-- شبكة البحث (تدعم مربعين عالموبايل) -->
+        <div id="searchResultsGrid" class="hidden grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 mt-8"></div>
     </main>
 
     <!-- Modal تفاصيل اللعبة -->
@@ -198,7 +199,6 @@
                         </div>
                     </div>
                     
-                    <!-- أزرار الكارد الموحدة والمصغرة -->
                     <div id="modalActionButtons" class="flex flex-col gap-2">
                         <button id="modalAddToCartBtn" class="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] border border-xbox-main hover:bg-xbox-main text-white px-4 py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg active:scale-95 transition-all">
                             <i class="fa-solid fa-cart-plus text-lg"></i> إضافة إلى السلة
@@ -226,9 +226,9 @@
         <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl relative flex flex-col max-h-[85vh] transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300" id="cartContent">
             
             <div class="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
-                <!-- تصغير عنوان السلة -->
+                <!-- محاذاة عنوان السلة مع الأيقونة -->
                 <h3 class="text-xl md:text-2xl font-black text-white flex items-center gap-2">
-                    <i class="fa-solid fa-basket-shopping text-xbox-main"></i> سلة المشتريات
+                    <i class="fa-solid fa-basket-shopping text-xbox-main mt-0.5"></i> <span class="pt-1">سلة المشتريات</span>
                 </h3>
                 <button onclick="history.back()" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full transition-colors">
                     <i class="fa-solid fa-xmark"></i>
@@ -243,7 +243,6 @@
                     <div class="text-3xl font-black text-xbox-light"><span id="cartTotalSum">0</span> <span class="text-lg">JOD</span></div>
                 </div>
                 
-                <!-- توحيد أزرار السلة (واتساب وماسنجر) -->
                 <div class="flex flex-col gap-3">
                     <button onclick="checkoutCart('whatsapp')" class="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3.5 rounded-xl font-black text-base shadow-lg active:scale-95 transition-all">
                         <i class="fa-brands fa-whatsapp text-xl"></i> إرسال الطلب عبر واتساب
@@ -256,18 +255,15 @@
         </div>
     </div>
 
-    <!-- الأزرار العائمة المصغرة والمرتبة عمودياً -->
+    <!-- الأزرار العائمة المصغرة -->
     <div class="fixed bottom-5 right-5 z-40 flex flex-col gap-3 items-center">
-        <!-- زر السلة المحدث (في الأعلى، لون معكوس ومقاس 12) -->
         <button onclick="openCart()" class="relative bg-xbox-main text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(16,124,16,0.4)] border border-[#1a1a1a] hover:scale-110 transition-all flex items-center justify-center">
             <i class="fa-solid fa-basket-shopping text-xl"></i>
             <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full border border-[#1a1a1a] hidden">0</span>
         </button>
-        <!-- ماسنجر (مقاس 12) -->
         <button onclick="openMessengerGeneral()" class="bg-[#0084FF] text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(0,132,255,0.4)] hover:scale-110 transition-all flex items-center justify-center">
             <i class="fa-brands fa-facebook-messenger text-2xl"></i>
         </button>
-        <!-- واتساب (مقاس 12) -->
         <button onclick="window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')" class="bg-[#25D366] text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(37,211,102,0.4)] hover:scale-110 transition-all flex items-center justify-center">
             <i class="fa-brands fa-whatsapp text-2xl"></i>
         </button>
@@ -275,7 +271,7 @@
 
     <script>
         // ==========================================
-        // الإعدادات 
+        // الإعدادات
         // ==========================================
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png"; 
         const WHATSAPP_NUMBER = "962777276992"; 
@@ -287,9 +283,7 @@
         let LATEST_GAMES = [];
         let BEST_GAMES = [];
         let SUBS_GAMES = [];
-        
         let CART = JSON.parse(localStorage.getItem('xb_cart')) || [];
-        
         let currentPage = 1;
         const itemsPerPage = 20;
 
@@ -321,7 +315,6 @@
                         } else if (!isNaN(discountedPrice)) { finalP = discountedPrice; }
 
                         let clicks = parseInt(localStorage.getItem('game_clicks_' + index)) || Math.floor(Math.random() * 10);
-                        
                         let isNewGame = row.is_new && (row.is_new.trim() === "نعم" || row.is_new.trim().toUpperCase() === "TRUE");
                         let statusText = row.status && (row.status.trim() === "نفذت الكمية" || row.status.trim().toUpperCase() === "TRUE") ? "نفذت الكمية" : "";
 
@@ -356,35 +349,52 @@
             });
         }
 
+        // دالة إنشاء الكارد (الآن تدعم وضع المربعين للموبايل بدون تشويه السلايدر)
         function generateCardHTML(game, isSlider = false) {
             const isOutOfStock = game.status === "نفذت الكمية";
-            const sliderClasses = isSlider ? 'flex-none w-[85vw] sm:w-[320px] snap-start' : '';
-            const outOfStockOverlay = isOutOfStock ? `<div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-red-600 text-white px-6 py-2 rounded-full font-black text-lg shadow-[0_0_20px_rgba(220,38,38,0.5)] transform -rotate-6 border border-red-400">نفذت الكمية</span></div>` : '';
+            const outOfStockOverlay = isOutOfStock ? `<div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-red-600 text-white px-3 sm:px-6 py-1 sm:py-2 rounded-full font-black text-xs sm:text-lg shadow-[0_0_20px_rgba(220,38,38,0.5)] transform -rotate-6 border border-red-400">نفذت الكمية</span></div>` : '';
             const cardClass = isOutOfStock ? 'out-of-stock-card' : '';
 
+            // كلاسات خاصة للحفاظ على شكل السلايدر كبير، وجعل الباقي مناسب لوضع (مربعين)
+            const sliderClasses = isSlider ? 'flex-none w-[85vw] sm:w-[320px] snap-start' : '';
+            const imgHeight = isSlider ? 'h-56' : 'h-36 sm:h-56';
+            const cardPadding = isSlider ? 'p-5' : 'p-3 sm:p-5';
+            const marginTop = isSlider ? '-mt-8' : '-mt-5 sm:-mt-8';
+            const titleSize = isSlider ? 'text-lg' : 'text-sm sm:text-lg mb-1 sm:mb-2';
+            const priceSize = isSlider ? 'text-2xl' : 'text-lg sm:text-2xl';
+            const tagContainer = isSlider ? 'gap-1.5 mb-2' : 'gap-1 mb-1 sm:mb-2';
+            const tagSize = isSlider ? 'text-[10px] px-2 py-1' : 'text-[8px] sm:text-[10px] px-1.5 py-0.5 sm:px-2 sm:py-1';
+            const btnSize = isSlider ? 'w-10 h-10 rounded-xl' : 'w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl';
+            const discountClass = isSlider ? 'top-4 right-4 text-xs px-3 py-1' : 'top-2 right-2 sm:top-4 sm:right-4 text-[9px] sm:text-xs px-2 py-0.5 sm:px-3 sm:py-1';
+
+            const discountBadge = game.discountPercent > 0 && !isOutOfStock 
+                ? `<div class="absolute ${discountClass} bg-red-600 text-white rounded-full font-black shadow-lg z-10">خصم ${game.discountPercent}%</div>` 
+                : '';
+                
+            const originalPriceStr = game.originalPrice ? `<span class="text-[10px] sm:text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
+            const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
+            const regionTag = game.region ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300"><i class="fa-solid fa-globe text-blue-500 ml-0.5 sm:ml-1"></i>${game.region}</span>` : '';
+
             return `
-                <div class="game-card bg-[#141414] rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${cardClass}" onclick="openModal(${game.id})">
-                    <div class="relative h-56 overflow-hidden shrink-0">
+                <div class="game-card bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${cardClass}" onclick="openModal(${game.id})">
+                    <div class="relative ${imgHeight} overflow-hidden shrink-0">
                         <img src="${game.image}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300">
-                        ${game.discountPercent > 0 && !isOutOfStock ? `<div class="absolute top-4 right-4 bg-red-600 text-white px-3 py-1 rounded-full text-xs font-black shadow-lg z-10">خصم ${game.discountPercent}%</div>` : ''}
+                        ${discountBadge}
                         ${outOfStockOverlay}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent z-10"></div>
                     </div>
-                    <div class="p-5 flex-grow flex flex-col -mt-8 relative z-10">
-                        <h4 class="text-lg font-black text-white mb-2 line-clamp-2 leading-tight">${game.title}</h4>
-                        <div class="flex flex-wrap gap-1.5 mb-2">
-                            ${game.type ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-1"></i>${game.type}</span>` : ''}
-                            ${game.region ? `<span class="text-[10px] font-bold bg-[#1a1a1a] border border-[#333] px-2 py-1 rounded text-gray-300"><i class="fa-solid fa-globe text-blue-500 ml-1"></i>${game.region}</span>` : ''}
-                        </div>
-                        <div class="mt-auto pt-3 border-t border-[#2a2a2a] flex items-center justify-between">
+                    <div class="${cardPadding} flex-grow flex flex-col ${marginTop} relative z-10">
+                        <h4 class="${titleSize} font-black text-white line-clamp-2 leading-tight">${game.title}</h4>
+                        <div class="flex flex-wrap ${tagContainer}">${typeTag}${regionTag}</div>
+                        <div class="mt-auto pt-2 sm:pt-3 border-t border-[#2a2a2a] flex items-center justify-between">
                             <div>
-                                ${game.originalPrice ? `<span class="text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : ''}
+                                ${originalPriceStr}
                                 <div class="flex items-baseline gap-1 ${isOutOfStock ? 'text-gray-500' : 'text-xbox-light'}">
-                                    <span class="text-2xl font-black">${game.price}</span>
-                                    <span class="text-xs font-bold">JOD</span>
+                                    <span class="${priceSize} font-black">${game.price}</span>
+                                    <span class="text-[9px] sm:text-xs font-bold">JOD</span>
                                 </div>
                             </div>
-                            <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main'} text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left text-sm"></i></button>
+                            <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main'} text-white ${btnSize} flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i></button>
                         </div>
                     </div>
                 </div>
@@ -409,9 +419,6 @@
             renderAllGamesPage(1, false);
         }
 
-        // ==========================================
-        // التصفح
-        // ==========================================
         function goHome(pushState = true) {
             document.getElementById('searchInput').value = '';
             document.getElementById('searchResultsGrid').classList.add('hidden');
@@ -452,22 +459,20 @@
             }
         }
 
+        // تم إصلاح أزرار التصفح لتكون في سطر واحد دائماً
         function renderPaginationControls() {
             const totalPages = Math.ceil(ALL_GAMES.length / itemsPerPage);
             const container = document.getElementById('paginationControls');
             if (totalPages <= 1) { container.innerHTML = ''; return; }
 
             let html = '';
-            if (currentPage > 1) html += `<button onclick="renderAllGamesPage(${currentPage - 1})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all"><i class="fa-solid fa-chevron-right ml-1"></i> السابق</button>`;
-            html += `<span class="text-gray-400 font-bold px-4 py-2 bg-[#141414] border border-[#2a2a2a] rounded-xl">صفحة ${currentPage} من ${totalPages}</span>`;
-            if (currentPage < totalPages) html += `<button onclick="renderAllGamesPage(${currentPage + 1})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-4 py-2 rounded-xl font-bold transition-all">التالي <i class="fa-solid fa-chevron-left mr-1"></i></button>`;
+            if (currentPage > 1) html += `<button onclick="renderAllGamesPage(${currentPage - 1})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-2 rounded-xl font-bold flex items-center gap-1 whitespace-nowrap transition-all"><i class="fa-solid fa-chevron-right text-xs"></i> <span>السابق</span></button>`;
+            html += `<span class="text-gray-400 text-sm sm:text-base font-bold px-3 sm:px-4 py-2 bg-[#141414] border border-[#2a2a2a] rounded-xl whitespace-nowrap">صفحة ${currentPage} / ${totalPages}</span>`;
+            if (currentPage < totalPages) html += `<button onclick="renderAllGamesPage(${currentPage + 1})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-2 rounded-xl font-bold flex items-center gap-1 whitespace-nowrap transition-all"><span>التالي</span> <i class="fa-solid fa-chevron-left text-xs"></i></button>`;
             
             container.innerHTML = html;
         }
 
-        // ==========================================
-        // نظام السلة المحدث (الهيدر + العائم)
-        // ==========================================
         function updateCartBadge() {
             const badge = document.getElementById('cartBadge');
             const headerBadge = document.getElementById('headerCartBadge');
@@ -504,7 +509,6 @@
         function openCart() {
             history.pushState({ view: 'cart' }, '', '#cart');
             renderCartItems();
-            
             const modal = document.getElementById('cartModal');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             setTimeout(() => {
@@ -524,7 +528,6 @@
         function renderCartItems() {
             const list = document.getElementById('cartItemsList');
             let total = 0;
-            
             if(CART.length === 0) {
                 list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-basket-shopping text-5xl text-gray-700 mb-4"></i><p class="text-gray-400">سلتك فارغة حالياً</p></div>`;
             } else {
@@ -550,16 +553,13 @@
 
             let total = 0;
             let orderText = "مرحباً، أريد طلب الألعاب التالية:\n\n";
-            
             CART.forEach((item, idx) => {
                 total += item.price;
-                orderText += `${idx + 1}. *${item.title}*\n`;
-                orderText += `   السعر: ${item.price} JOD`;
+                orderText += `${idx + 1}. *${item.title}*\n   السعر: ${item.price} JOD`;
                 if(item.type) orderText += ` - ${item.type}`;
                 if(item.region) orderText += ` (${item.region})`;
                 orderText += `\n\n`;
             });
-            
             orderText += `-------------------\n*المجموع الكلي: ${total} JOD*`;
 
             if(method === 'whatsapp') {
@@ -570,15 +570,11 @@
             }
         }
 
-        // ==========================================
-        // الإشعارات والماسنجر
-        // ==========================================
         function showCustomToast(text, iconClass, bgColorClass) {
             const toast = document.getElementById('toastMsg');
             document.getElementById('toastText').innerText = text;
             document.getElementById('toastIcon').className = `fa-solid ${iconClass} text-xl`;
             toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 transition-all duration-300 ${bgColorClass}`;
-            
             setTimeout(() => { toast.classList.add('opacity-0', '-translate-y-10', 'pointer-events-none'); }, 3000);
         }
 
@@ -628,9 +624,6 @@
             }
         }
 
-        // ==========================================
-        // Modal اللعبة
-        // ==========================================
         function openModal(gameId) {
             const game = ALL_GAMES.find(g => g.id === gameId);
             if(!game) return;
@@ -669,7 +662,6 @@
                 if(game.type) extraInfo += `%0Aالنوع: ${game.type}`;
                 if(game.region) extraInfo += `%0Aالريجون: ${game.region}`;
                 const buyMsg = `مرحباً، أريد شراء: *${game.title}*%0Aالسعر: ${game.price} دينار.${extraInfo}`;
-                
                 let msgTextPlain = `مرحباً، أريد شراء: ${game.title}\nالسعر: ${game.price} دينار.\nالنوع: ${game.type || ''}\nالريجون: ${game.region || ''}`;
 
                 document.getElementById('modalBuyBtn').onclick = () => window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${buyMsg}`, '_blank');
@@ -677,7 +669,6 @@
             }
 
             history.pushState({ view: 'game' }, '', '#game');
-            
             const modal = document.getElementById('gameModal');
             modal.classList.remove('hidden'); modal.classList.add('flex');
             setTimeout(() => {
@@ -696,36 +687,26 @@
             setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('flex'); document.body.style.overflow = 'auto'; }, 300);
         }
 
-        // ==========================================
-        // إدارة زر الرجوع الشاملة
-        // ==========================================
         window.addEventListener('popstate', function(event) {
             const hash = window.location.hash;
-            
             closeGameModal();
             closeCart();
 
-            if (hash === '') {
-                goHome(false);
-            } else if (hash.startsWith('#cat=')) {
-                showCategory(hash.replace('#cat=', ''), false);
-            } else if (hash.startsWith('#page=')) {
-                renderAllGamesPage(parseInt(hash.replace('#page=', '')), false);
-            }
+            if (hash === '') goHome(false);
+            else if (hash.startsWith('#cat=')) showCategory(hash.replace('#cat=', ''), false);
+            else if (hash.startsWith('#page=')) renderAllGamesPage(parseInt(hash.replace('#page=', '')), false);
         });
 
         function handleRoute() {
             const hash = window.location.hash;
-            if (hash.startsWith('#cat=')) {
-                showCategory(hash.replace('#cat=', ''), false);
-            } else if (hash.startsWith('#page=')) {
-                renderAllGamesPage(parseInt(hash.replace('#page=', '')), false);
-            } else if (hash === '#cart') {
-                openCart();
-            } else {
-                goHome(false);
-            }
+            if (hash.startsWith('#cat=')) showCategory(hash.replace('#cat=', ''), false);
+            else if (hash.startsWith('#page=')) renderAllGamesPage(parseInt(hash.replace('#page=', '')), false);
+            else if (hash === '#cart') openCart();
+            else goHome(false);
         }
+
+        document.getElementById('gameModal').addEventListener('click', function(e) { if (e.target === this) history.back(); });
+        document.getElementById('cartModal').addEventListener('click', function(e) { if (e.target === this) history.back(); });
 
         window.onload = fetchGames;
     </script>
