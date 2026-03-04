@@ -80,7 +80,7 @@
                 <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-gray-500">
                     <i class="fa-solid fa-search"></i>
                 </div>
-                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-4 pr-14 pl-6 focus:outline-none focus:border-xbox-main transition-all text-lg shadow-2xl" onkeyup="handleSearch()"/>
+                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك، خصم..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-4 pr-14 pl-6 focus:outline-none focus:border-xbox-main transition-all text-lg shadow-2xl" onkeyup="handleSearch()"/>
             </div>
         </div>
     </div>
@@ -112,7 +112,14 @@
         </div>
 
         <div id="mainSections" class="hidden space-y-12">
-            <section id="latestSection" class="relative">
+            
+            <!-- زر الخصومات الجديد والعريض -->
+            <button onclick="showCategory('discounts')" class="w-full bg-gradient-to-r from-xbox-main to-xbox-dark text-white font-black py-3.5 sm:py-5 rounded-2xl sm:rounded-3xl shadow-[0_5px_20px_rgba(16,124,16,0.3)] hover:scale-[1.01] active:scale-95 transition-all text-lg sm:text-xl flex items-center justify-center gap-3 mb-2 border border-green-500/30">
+                <i class="fa-solid fa-tags text-xl sm:text-2xl"></i>
+                <span>أحدث الخصومات والعروض</span>
+            </button>
+
+            <section id="latestSection" class="relative hidden">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-fire text-orange-500"></i> أحدث الألعاب
@@ -122,7 +129,7 @@
                 <div id="latestGrid" class="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <section id="bestSellersSection" class="relative">
+            <section id="bestSellersSection" class="relative hidden">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-crown text-yellow-500"></i> الأكثر مبيعاً
@@ -132,7 +139,7 @@
                 <div id="bestSellersGrid" class="flex overflow-x-auto gap-4 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
             </section>
 
-            <section id="subsSection" class="relative">
+            <section id="subsSection" class="relative hidden">
                 <div class="flex items-center justify-between mb-6 border-b border-[#2a2a2a] pb-4">
                     <h3 class="text-2xl md:text-3xl font-black text-white flex items-center gap-3">
                         <i class="fa-solid fa-ticket text-blue-500"></i> الاشتراكات
@@ -271,28 +278,14 @@
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i"; 
         const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         
-        // قاموس الألعاب الدقيق والمباشر (بدون كلمات عامة)
+        // قاموس الألعاب الدقيق
         const ARABIC_DICTIONARY = {
-            "fifa": "فيفا فيفة",
-            "fc": "فيفا فيفة إف سي اف سي",
-            "gta": "قراند جراند جي تي اي",
-            "call of duty": "كول اوف ديوتي كود",
-            "cod": "كول اوف ديوتي كود",
-            "assassin": "اساسن اساسين",
-            "resident evil": "ريزدنت ايفل رزدنت",
-            "minecraft": "ماين كرافت ماينكرافت",
-            "red dead": "ريد ديد",
-            "spider": "سبايدر مان سبايدرمان",
-            "batman": "باتمان بات مان",
-            "forza": "فورزا",
-            "need for speed": "نيد فور سبيد",
-            "mortal": "مورتال كومبات",
-            "tekken": "تيكن تكن",
-            "wwe": "دبليو دبليو اي مصارعة",
-            "crash": "كراش",
-            "pes": "بيس",
-            "outlast": "اوتلاست",
-            "battlefield": "باتلفيلد"
+            "fifa": "فيفا فيفة", "fc": "فيفا فيفة إف سي اف سي", "gta": "قراند جراند جي تي اي",
+            "call of duty": "كول اوف ديوتي كود", "cod": "كول اوف ديوتي كود", "assassin": "اساسن اساسين",
+            "resident evil": "ريزدنت ايفل رزدنت", "minecraft": "ماين كرافت ماينكرافت", "red dead": "ريد ديد",
+            "spider": "سبايدر مان سبايدرمان", "batman": "باتمان بات مان", "forza": "فورزا",
+            "need for speed": "نيد فور سبيد", "mortal": "مورتال كومبات", "tekken": "تيكن تكن",
+            "wwe": "دبليو دبليو اي مصارعة", "crash": "كراش", "pes": "بيس", "outlast": "اوتلاست", "battlefield": "باتلفيلد"
         };
         // ==========================================
 
@@ -342,7 +335,6 @@
                             if (val === "TRUE" || val === "نعم" || val === "ترجمة عربية" || val === "يدعم") isArabic = true;
                         }
 
-                        // إضافة الأسماء البديلة المباشرة فقط
                         let autoSearchTags = "";
                         let titleLower = row.title.toLowerCase();
                         for (let engWord in ARABIC_DICTIONARY) {
@@ -363,7 +355,7 @@
                             image: row.image || "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800",
                             features: row.features ? row.features.split('|') : ["تفعيل فوري"],
                             description: row.description || "",
-                            autoTags: autoSearchTags, // فقط الكلمات الدقيقة المترجمة من القاموس
+                            autoTags: autoSearchTags,
                             isNew: isNewGame,
                             clicks: clicks
                         };
@@ -407,6 +399,7 @@
             const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
             const arabicTag = game.isArabic ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300"><i class="fa-solid fa-language text-blue-500 ml-0.5 sm:ml-1"></i>ترجمة</span>` : '';
 
+            // زر السلة السريع تم إضافته بجانب السهم
             return `
                 <div class="game-card bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${cardClass}" onclick="openModal(${game.id})">
                     <div class="relative ${imgHeight} overflow-hidden shrink-0">
@@ -426,7 +419,10 @@
                                     <span class="text-[9px] sm:text-xs font-bold">JOD</span>
                                 </div>
                             </div>
-                            <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main'} text-white ${btnSize} flex items-center justify-center transition-colors"><i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i></button>
+                            <div class="flex items-center gap-1.5 sm:gap-2">
+                                ${!isOutOfStock ? `<button onclick="event.stopPropagation(); addToCart(${game.id})" class="bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white ${btnSize} flex items-center justify-center transition-colors shadow-lg"><i class="fa-solid fa-cart-plus text-xs sm:text-sm"></i></button>` : ''}
+                                <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main hover:text-xbox-main'} text-white ${btnSize} flex items-center justify-center transition-colors shadow-lg"><i class="fa-solid fa-chevron-left text-xs sm:text-sm"></i></button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -436,16 +432,29 @@
         function distributeGames() {
             document.getElementById('mainSections').classList.remove('hidden');
             
-            document.getElementById('latestGrid').innerHTML = LATEST_GAMES.length ? LATEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('') : '';
-            if(LATEST_GAMES.length <= 8) document.getElementById('btnMoreLatest').style.display = 'none';
+            // إخفاء السلايدات الفارغة بالكامل
+            if(LATEST_GAMES.length === 0) {
+                document.getElementById('latestSection').classList.add('hidden');
+            } else {
+                document.getElementById('latestSection').classList.remove('hidden');
+                document.getElementById('latestGrid').innerHTML = LATEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
+                document.getElementById('btnMoreLatest').style.display = LATEST_GAMES.length <= 8 ? 'none' : 'block';
+            }
 
-            document.getElementById('bestSellersGrid').innerHTML = BEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
-            if(BEST_GAMES.length <= 8) document.getElementById('btnMoreBest').style.display = 'none';
+            if(BEST_GAMES.length === 0) {
+                document.getElementById('bestSellersSection').classList.add('hidden');
+            } else {
+                document.getElementById('bestSellersSection').classList.remove('hidden');
+                document.getElementById('bestSellersGrid').innerHTML = BEST_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
+                document.getElementById('btnMoreBest').style.display = BEST_GAMES.length <= 8 ? 'none' : 'block';
+            }
 
-            if(SUBS_GAMES.length === 0) document.getElementById('subsSection').style.display = 'none';
-            else {
+            if(SUBS_GAMES.length === 0) {
+                document.getElementById('subsSection').classList.add('hidden');
+            } else {
+                document.getElementById('subsSection').classList.remove('hidden');
                 document.getElementById('subsGrid').innerHTML = SUBS_GAMES.slice(0, 8).map(g => generateCardHTML(g, true)).join('');
-                if(SUBS_GAMES.length <= 8) document.getElementById('btnMoreSubs').style.display = 'none';
+                document.getElementById('btnMoreSubs').style.display = SUBS_GAMES.length <= 8 ? 'none' : 'block';
             }
 
             renderAllGamesPage(1, false);
@@ -471,6 +480,7 @@
             if(catType === 'latest') { document.getElementById('categoryTitle').innerText = "أحدث الألعاب"; gamesToShow = LATEST_GAMES; }
             else if (catType === 'best') { document.getElementById('categoryTitle').innerText = "الأكثر مبيعاً"; gamesToShow = BEST_GAMES; }
             else if (catType === 'subs') { document.getElementById('categoryTitle').innerText = "الاشتراكات"; gamesToShow = SUBS_GAMES; }
+            else if (catType === 'discounts') { document.getElementById('categoryTitle').innerText = "أحدث الخصومات"; gamesToShow = ALL_GAMES.filter(g => g.discountPercent > 0); }
 
             document.getElementById('categoryGrid').innerHTML = gamesToShow.map(g => generateCardHTML(g, false)).join('');
             window.scrollTo({top: 0, behavior: 'smooth'});
@@ -629,7 +639,7 @@
         function openMessengerGeneral() { smartCopyAndOpenMessenger("مرحباً، لدي استفسار بخصوص متجر الألعاب الخاص بكم."); }
 
         // ==========================================
-        // نظام البحث المباشر (بدون كلمات عامة)
+        // نظام البحث المحدث (التعرف على كلمات الخصومات)
         // ==========================================
         function handleSearch() {
             const query = document.getElementById('searchInput').value;
@@ -649,14 +659,26 @@
 
             mainSections.classList.add('hidden');
             
-            const normalize = (text) => text.toLowerCase().replace(/[^\w\s\u0600-\u06FF]/gi, '');
+            // تنظيف النص وتوحيد الألف والتاء المربوطة
+            const normalize = (text) => text.toLowerCase().replace(/[أإآ]/g, 'ا').replace(/ة/g, 'ه').replace(/[^\w\s\u0600-\u06FF]/gi, '');
             const queryWords = normalize(query).split(/\s+/).filter(w => w.length > 0);
 
-            const filtered = ALL_GAMES.filter(game => {
-                // البحث الآن يتم في: الاسم، النوع، والكلمات المترجمة حرفياً من القاموس فقط
-                const searchableText = normalize(game.title + " " + game.type + " " + game.autoTags);
-                return queryWords.every(word => searchableText.includes(word));
-            });
+            // الكشف عن أنواع البحث المخصصة
+            const isDiscountSearch = queryWords.some(w => ["خصم", "خصومات", "عروض", "تنزيلات", "discount", "sale"].includes(w));
+            const isNewSearch = queryWords.some(w => ["احدث", "جديد", "new", "latest"].includes(w));
+
+            let filtered = [];
+            
+            if (isDiscountSearch) {
+                filtered = ALL_GAMES.filter(g => g.discountPercent > 0);
+            } else if (isNewSearch) {
+                filtered = LATEST_GAMES;
+            } else {
+                filtered = ALL_GAMES.filter(game => {
+                    const searchableText = normalize(game.title + " " + game.type + " " + game.autoTags);
+                    return queryWords.every(word => searchableText.includes(word));
+                });
+            }
             
             if (filtered.length === 0) {
                 searchGrid.classList.add('hidden');
