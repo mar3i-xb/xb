@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mar3i-XB | متجر الألعاب الرقمية</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -22,15 +22,16 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
-        body { background-color: #0d0d0d; color: #f3f4f6; font-family: 'Tajawal', sans-serif; display: flex; flex-direction: column; min-height: 100vh; }
-        main { flex: 1; }
+        /* إضافة overflow-x-hidden تمنع الشاشة من الضرب أو الخروج عن الإطار نهائياً */
+        body { background-color: #0d0d0d; color: #f3f4f6; font-family: 'Tajawal', sans-serif; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; }
+        main { flex: 1; overflow-x: hidden; }
         .glow-bg {
             position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
-            width: 80%; height: 600px; background: radial-gradient(circle, rgba(16,124,16,0.15) 0%, rgba(13,13,13,0) 70%);
+            width: 100%; height: 600px; background: radial-gradient(circle, rgba(16,124,16,0.15) 0%, rgba(13,13,13,0) 70%);
             z-index: 0; pointer-events: none;
         }
         .game-card { transition: all 0.3s ease; }
-        .game-card:hover { transform: translateY(-5px); border-color: #107C10; box-shadow: 0 10px 30px -10px rgba(16,124,16,0.3); }
+        .game-card:hover { transform: translateY(-3px); border-color: #107C10; box-shadow: 0 10px 20px -10px rgba(16,124,16,0.3); }
         .loader { border: 4px solid #1a1a1a; border-top: 4px solid #107C10; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .modal-scroll::-webkit-scrollbar, .hide-scroll-bar::-webkit-scrollbar { display: none; }
@@ -41,9 +42,9 @@
 </head>
 <body class="antialiased selection:bg-xbox-main selection:text-white">
 
-    <div id="toastMsg" class="fixed top-5 left-1/2 transform -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none -translate-y-10 border border-white/20">
+    <div id="toastMsg" class="fixed top-5 left-1/2 transform -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 transition-all duration-300 opacity-0 pointer-events-none -translate-y-10 border border-white/20 w-11/12 max-w-sm justify-center">
         <i id="toastIcon" class="fa-solid fa-circle-check text-xl"></i>
-        <span id="toastText" class="font-bold text-sm whitespace-nowrap"></span>
+        <span id="toastText" class="font-bold text-sm text-center"></span>
     </div>
 
     <!-- Header -->
@@ -54,16 +55,16 @@
                     <img id="storeLogo" src="" alt="Mar3i-XB" class="h-8 md:h-12 object-contain" onerror="this.outerHTML='<span class=\'text-2xl font-black text-white italic\'>Mar3i-<span class=\'text-xbox-main\'>XB</span></span>'">
                 </div>
                 
-                <div class="flex items-center gap-2 sm:gap-4">
-                    <button onclick="openFAQModal()" class="text-gray-400 hover:text-white transition-colors p-2 outline-none" title="الأسئلة الشائعة">
+                <div class="flex items-center gap-3 sm:gap-4">
+                    <button onclick="openFAQModal()" class="text-gray-400 hover:text-white transition-colors outline-none" title="الأسئلة الشائعة">
                         <i class="fa-solid fa-circle-question text-lg sm:text-xl"></i>
                     </button>
-                    <button onclick="openReviewsModal()" class="text-gray-400 hover:text-white transition-colors p-2 outline-none" title="آراء العملاء">
+                    <button onclick="openReviewsModal()" class="text-gray-400 hover:text-white transition-colors outline-none" title="آراء العملاء">
                         <i class="fa-solid fa-comments text-lg sm:text-xl"></i>
                     </button>
-                    <button onclick="openCart()" class="relative flex items-center justify-center text-gray-300 hover:text-white transition-colors p-2 outline-none">
+                    <button onclick="openCart()" class="relative flex items-center justify-center text-gray-300 hover:text-white transition-colors outline-none border-0">
                         <i class="fa-solid fa-basket-shopping text-xl sm:text-2xl"></i>
-                        <span id="headerCartBadge" class="absolute top-0 right-0 bg-red-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden border-none">0</span>
+                        <span id="headerCartBadge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[10px] font-bold w-4 h-4 flex items-center justify-center rounded-full hidden border-0">0</span>
                     </button>
                 </div>
             </div>
@@ -71,47 +72,47 @@
     </nav>
 
     <!-- Hero Section & Search & Filters -->
-    <div class="relative overflow-hidden" id="heroSection">
+    <div class="relative overflow-hidden w-full" id="heroSection">
         <div class="glow-bg"></div>
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 relative z-10 text-center">
-            <h2 class="text-4xl md:text-6xl font-black text-white mb-4 sm:mb-6 leading-tight">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-16 relative z-10 text-center">
+            <h2 class="text-3xl md:text-6xl font-black text-white mb-4 sm:mb-6 leading-tight">
                 ألعاب إكس بوكس الرقمية <br/>
                 <span class="text-transparent bg-clip-text bg-gradient-to-r from-xbox-light to-xbox-main">بسعر الحرق!</span>
             </h2>
-            <p class="text-sm sm:text-lg text-gray-400 mb-8 leading-relaxed max-w-3xl mx-auto">
+            <p class="text-xs sm:text-lg text-gray-400 mb-6 sm:mb-8 leading-relaxed max-w-3xl mx-auto">
                 استلم لعبتك فوراً بعد الدفع. نوفر لك أكواد أو حسابات جديدة أو تفعيل مباشر لحسابك الأساسي مع شرح كامل ومبسط للتفعيل.
             </p>
             
             <!-- مربع البحث -->
-            <div class="relative group max-w-2xl mx-auto mb-4">
-                <div class="absolute inset-y-0 right-0 pr-5 flex items-center pointer-events-none text-gray-500">
+            <div class="relative group max-w-2xl mx-auto mb-4 w-full">
+                <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-500">
                     <i class="fa-solid fa-search"></i>
                 </div>
-                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك، خصم..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-3 sm:py-4 pr-14 pl-6 focus:outline-none focus:border-xbox-main transition-all text-base sm:text-lg shadow-2xl" onkeyup="handleSearch()"/>
+                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك، خصم..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-3 pr-12 pl-4 focus:outline-none focus:border-xbox-main transition-all text-sm sm:text-lg shadow-xl" onkeyup="handleSearch()"/>
             </div>
 
-            <!-- زر الخصومات ثابت أسفل البحث -->
-            <div class="max-w-2xl mx-auto mb-6 px-2 sm:px-0">
-                <button onclick="showGridCategory('discounts', 'أحدث الخصومات والعروض')" class="w-full bg-gradient-to-r from-xbox-main to-xbox-dark text-white font-black py-3.5 sm:py-4 rounded-2xl sm:rounded-3xl shadow-[0_5px_20px_rgba(16,124,16,0.3)] hover:scale-[1.01] active:scale-95 transition-all text-lg sm:text-xl flex items-center justify-center gap-3 border border-green-500/30 outline-none">
-                    <i class="fa-solid fa-tags text-xl sm:text-2xl"></i>
+            <!-- زر الخصومات ثابت أسفل البحث مباشرة وبحجم متناسق -->
+            <div id="discountBtnContainer" class="max-w-2xl mx-auto mb-6 w-full">
+                <button onclick="showGridCategory('discounts', 'أحدث الخصومات والعروض')" class="w-full bg-gradient-to-r from-xbox-main to-xbox-dark text-white font-black py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-lg hover:scale-[1.01] active:scale-95 transition-all text-base sm:text-xl flex items-center justify-center gap-2 sm:gap-3 border border-green-500/30 outline-none">
+                    <i class="fa-solid fa-tags text-lg sm:text-xl"></i>
                     <span>أحدث الخصومات والعروض</span>
                 </button>
             </div>
 
-            <!-- شريط الفلاتر -->
-            <div class="flex overflow-x-auto gap-2 max-w-3xl mx-auto hide-scroll-bar pb-2 justify-start md:justify-center px-2">
-                <button onclick="applyFilter('all', this)" class="filter-btn active whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0">الكل</button>
-                <button onclick="applyFilter('sort_asc', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-arrow-down-short-wide text-xbox-light mr-1"></i> السعر: أدنى</button>
-                <button onclick="applyFilter('sort_desc', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-arrow-up-wide-short text-red-500 mr-1"></i> السعر: أعلى</button>
-                <button onclick="applyFilter('price_5', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0">أقل من 5 د.أ</button>
-                <button onclick="applyFilter('price_10', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0">أقل من 10 د.أ</button>
-                <button onclick="applyFilter('price_20', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0">أقل من 20 د.أ</button>
-                <button onclick="applyFilter('arabic', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-language text-blue-500 mr-1"></i> معربة</button>
+            <!-- شريط الفلاتر (قابل للسحب) -->
+            <div class="flex overflow-x-auto gap-2 max-w-3xl mx-auto hide-scroll-bar pb-2 pt-1 justify-start md:justify-center">
+                <button onclick="applyFilter('all', this)" class="filter-btn active whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0">الكل</button>
+                <button onclick="applyFilter('sort_asc', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-arrow-down-short-wide text-xbox-light mr-1"></i> السعر: أدنى</button>
+                <button onclick="applyFilter('sort_desc', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-arrow-up-wide-short text-red-500 mr-1"></i> السعر: أعلى</button>
+                <button onclick="applyFilter('price_5', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0">أقل من 5 د.أ</button>
+                <button onclick="applyFilter('price_10', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0">أقل من 10 د.أ</button>
+                <button onclick="applyFilter('price_20', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0">أقل من 20 د.أ</button>
+                <button onclick="applyFilter('arabic', this)" class="filter-btn whitespace-nowrap bg-[#1a1a1a] border border-[#333] text-gray-300 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-sm font-bold transition-colors shrink-0"><i class="fa-solid fa-language text-blue-500 mr-1"></i> معربة</button>
             </div>
         </div>
     </div>
 
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 w-full">
         
         <div id="loadingState" class="text-center py-20">
             <div class="loader mb-4"></div>
@@ -125,81 +126,83 @@
         </div>
 
         <!-- السلايدرات والأقسام الرئيسية -->
-        <div id="slidersSections" class="space-y-10 sm:space-y-12 hidden">
+        <div id="slidersSections" class="space-y-8 sm:space-y-12 hidden w-full">
 
-            <section id="latestSection" class="relative hidden">
-                <div class="flex items-center justify-between mb-4 sm:mb-6 border-b border-[#2a2a2a] pb-3 sm:pb-4">
-                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-2 sm:gap-3">
+            <section id="latestSection" class="relative hidden w-full">
+                <div class="flex items-center justify-between mb-3 sm:mb-6 border-b border-[#2a2a2a] pb-2 sm:pb-4">
+                    <h3 class="text-lg sm:text-3xl font-black text-white flex items-center gap-2">
                         <i class="fa-solid fa-fire text-orange-500"></i> أحدث الألعاب
                     </h3>
-                    <button id="btnMoreLatest" onclick="showGridCategory('latest', 'أحدث الألعاب')" class="text-xbox-main hover:text-white font-bold text-xs sm:text-sm bg-[#1a1a1a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
+                    <button id="btnMoreLatest" onclick="showGridCategory('latest', 'أحدث الألعاب')" class="text-xbox-main hover:text-white font-bold text-[11px] sm:text-sm bg-[#1a1a1a] px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
                 </div>
-                <div id="latestGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="latestGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory hide-scroll-bar scroll-smooth w-full"></div>
             </section>
 
-            <section id="bestSellersSection" class="relative hidden">
-                <div class="flex items-center justify-between mb-4 sm:mb-6 border-b border-[#2a2a2a] pb-3 sm:pb-4">
-                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-2 sm:gap-3">
+            <section id="bestSellersSection" class="relative hidden w-full">
+                <div class="flex items-center justify-between mb-3 sm:mb-6 border-b border-[#2a2a2a] pb-2 sm:pb-4">
+                    <h3 class="text-lg sm:text-3xl font-black text-white flex items-center gap-2">
                         <i class="fa-solid fa-crown text-yellow-500"></i> الأكثر مبيعاً
                     </h3>
-                    <button id="btnMoreBest" onclick="showGridCategory('best', 'الأكثر مبيعاً')" class="text-xbox-main hover:text-white font-bold text-xs sm:text-sm bg-[#1a1a1a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
+                    <button id="btnMoreBest" onclick="showGridCategory('best', 'الأكثر مبيعاً')" class="text-xbox-main hover:text-white font-bold text-[11px] sm:text-sm bg-[#1a1a1a] px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
                 </div>
-                <div id="bestSellersGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="bestSellersGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory hide-scroll-bar scroll-smooth w-full"></div>
             </section>
 
-            <section id="subsSection" class="relative hidden">
-                <div class="flex items-center justify-between mb-4 sm:mb-6 border-b border-[#2a2a2a] pb-3 sm:pb-4">
-                    <h3 class="text-xl sm:text-2xl md:text-3xl font-black text-white flex items-center gap-2 sm:gap-3">
+            <section id="subsSection" class="relative hidden w-full">
+                <div class="flex items-center justify-between mb-3 sm:mb-6 border-b border-[#2a2a2a] pb-2 sm:pb-4">
+                    <h3 class="text-lg sm:text-3xl font-black text-white flex items-center gap-2">
                         <i class="fa-solid fa-ticket text-blue-500"></i> الاشتراكات
                     </h3>
-                    <button id="btnMoreSubs" onclick="showGridCategory('subs', 'الاشتراكات')" class="text-xbox-main hover:text-white font-bold text-xs sm:text-sm bg-[#1a1a1a] px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
+                    <button id="btnMoreSubs" onclick="showGridCategory('subs', 'الاشتراكات')" class="text-xbox-main hover:text-white font-bold text-[11px] sm:text-sm bg-[#1a1a1a] px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg transition-colors border border-[#2a2a2a] hover:border-xbox-main outline-none">عرض المزيد</button>
                 </div>
-                <div id="subsGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-6 pt-2 snap-x snap-mandatory hide-scroll-bar scroll-smooth"></div>
+                <div id="subsGrid" class="flex overflow-x-auto gap-3 sm:gap-6 pb-4 pt-1 snap-x snap-mandatory hide-scroll-bar scroll-smooth w-full"></div>
             </section>
             
-            <div class="text-center pt-8 border-t-4 border-[#1a1a1a] mb-4 sm:mb-6">
-                <h3 class="text-2xl md:text-4xl font-black text-white mb-2">تصفح جميع العروض</h3>
+            <div class="text-center pt-6 sm:pt-8 border-t-2 sm:border-t-4 border-[#1a1a1a] mb-4 sm:mb-6 w-full">
+                <h3 class="text-xl sm:text-4xl font-black text-white mb-2">تصفح جميع العروض</h3>
             </div>
             
-            <!-- شبكة جميع العروض (2 كارد للموبايل) -->
-            <div id="allGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 px-1 sm:px-0"></div>
-            <div id="paginationControls" class="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12 mb-10"></div>
+            <!-- شبكة جميع العروض (كاردين للموبايل بتنسيق محمي من التداخل) -->
+            <div id="allGamesGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6 w-full"></div>
+            <div id="paginationControls" class="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12 mb-10 w-full"></div>
         </div>
 
-        <!-- الشبكة الموحدة للبحث والفلاتر والأقسام المفتوحة -->
-        <div id="unifiedGridSection" class="hidden">
-            <div id="gridHeader" class="flex items-center gap-3 sm:gap-4 mb-6 sm:mb-8 hidden px-1 sm:px-0">
-                <button onclick="goHome(false)" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white w-9 h-9 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors shrink-0 outline-none">
-                    <i class="fa-solid fa-arrow-right text-sm"></i>
+        <!-- الشبكة الموحدة للبحث والفلاتر والأقسام -->
+        <div id="unifiedGridSection" class="hidden w-full">
+            <div id="gridHeader" class="flex items-center gap-3 mb-4 sm:mb-8 hidden w-full">
+                <!-- زر الرجوع أصبح يعود للرئيسية مباشرة لمنع أي تعليق -->
+                <button onclick="goHome(false)" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white w-8 h-8 sm:w-10 sm:h-10 rounded-xl flex items-center justify-center transition-colors shrink-0 outline-none">
+                    <i class="fa-solid fa-arrow-right text-xs sm:text-sm"></i>
                 </button>
-                <h3 id="gridTitle" class="text-lg sm:text-3xl font-black text-white whitespace-nowrap overflow-hidden text-ellipsis"></h3>
+                <h3 id="gridTitle" class="text-base sm:text-3xl font-black text-white whitespace-nowrap overflow-hidden text-ellipsis flex-1"></h3>
             </div>
-            <div id="gridNoResults" class="hidden text-center py-20 bg-[#141414] rounded-3xl border border-[#2a2a2a]">
-                <i class="fa-solid fa-search text-4xl sm:text-5xl text-gray-600 mb-4"></i>
-                <h4 class="text-xl sm:text-2xl font-bold text-gray-300">لا يوجد نتائج تطابق بحثك</h4>
+            <div id="gridNoResults" class="hidden text-center py-20 bg-[#141414] rounded-2xl border border-[#2a2a2a] w-full">
+                <i class="fa-solid fa-search text-3xl sm:text-5xl text-gray-600 mb-3 sm:mb-4"></i>
+                <h4 class="text-lg sm:text-2xl font-bold text-gray-300">لا يوجد نتائج تطابق بحثك</h4>
             </div>
-            <div id="gridContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6 px-1 sm:px-0"></div>
-            <div id="gridPagination" class="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12 mb-10"></div>
+            <!-- شبكة الفلاتر (كاردين للموبايل) -->
+            <div id="gridContainer" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-6 w-full"></div>
+            <div id="gridPagination" class="flex items-center justify-center gap-2 sm:gap-4 mt-8 sm:mt-12 mb-10 w-full"></div>
         </div>
 
     </main>
 
     <!-- Footer -->
-    <footer class="bg-[#0a0a0a] border-t border-[#1a1a1a] mt-auto pb-24 pt-10">
+    <footer class="bg-[#0a0a0a] border-t border-[#1a1a1a] mt-auto pb-24 pt-8 w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center flex flex-col items-center">
-            <div class="mb-8">
-                <h4 class="text-sm font-bold text-gray-500 mb-4 uppercase tracking-wider">طرق الدفع المعتمدة</h4>
-                <div class="flex flex-wrap justify-center gap-3">
-                    <span class="bg-[#141414] border border-[#2a2a2a] px-4 py-2 rounded-xl text-sm font-bold text-gray-300 flex items-center gap-2 shadow-sm"><div class="w-2.5 h-2.5 rounded-full bg-xbox-main"></div> CliQ</span>
-                    <span class="bg-[#141414] border border-[#2a2a2a] px-4 py-2 rounded-xl text-sm font-bold text-gray-300 flex items-center gap-2 shadow-sm"><div class="w-2.5 h-2.5 rounded-full bg-blue-500"></div> محافظ إلكترونية</span>
+            <div class="mb-6 sm:mb-8">
+                <h4 class="text-xs sm:text-sm font-bold text-gray-500 mb-3 sm:mb-4 uppercase tracking-wider">طرق الدفع المعتمدة</h4>
+                <div class="flex flex-wrap justify-center gap-2 sm:gap-3">
+                    <span class="bg-[#141414] border border-[#2a2a2a] px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-gray-300 flex items-center gap-1.5 shadow-sm"><div class="w-2 h-2 rounded-full bg-xbox-main"></div> CliQ</span>
+                    <span class="bg-[#141414] border border-[#2a2a2a] px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-xs sm:text-sm font-bold text-gray-300 flex items-center gap-1.5 shadow-sm"><div class="w-2 h-2 rounded-full bg-blue-500"></div> محافظ إلكترونية</span>
                 </div>
             </div>
-            <div class="flex gap-6 mb-8 text-gray-400 text-sm font-bold">
+            <div class="flex gap-4 sm:gap-6 mb-6 text-gray-400 text-xs sm:text-sm font-bold">
                 <button onclick="openFAQModal()" class="hover:text-xbox-main transition-colors outline-none">الأسئلة الشائعة</button>
                 <button onclick="openReviewsModal()" class="hover:text-xbox-main transition-colors outline-none">آراء العملاء</button>
             </div>
-            <img id="footerLogo" src="" alt="Mar3i-XB Logo" class="h-10 mb-4 opacity-80" onerror="this.style.display='none'">
-            <div class="text-gray-600 text-xs sm:text-sm font-bold">
+            <img id="footerLogo" src="" alt="Mar3i-XB Logo" class="h-8 sm:h-10 mb-3 sm:mb-4 opacity-80" onerror="this.style.display='none'">
+            <div class="text-gray-600 text-[10px] sm:text-sm font-bold">
                 جميع الحقوق محفوظة لمتجر <span class="text-gray-400">Mar3i-XB</span> &copy; <span id="currentYear"></span>
             </div>
         </div>
@@ -207,40 +210,40 @@
 
     <!-- ================= MODALS ================= -->
 
-    <div id="gameModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 sm:p-6 bg-black/90 backdrop-blur-md opacity-0 transition-opacity duration-300">
+    <div id="gameModal" class="fixed inset-0 z-50 hidden items-center justify-center p-4 bg-black/90 backdrop-blur-md opacity-0 transition-opacity duration-300">
         <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-4xl rounded-[2rem] shadow-2xl relative flex flex-col md:flex-row max-h-[90vh] overflow-hidden transform scale-95 transition-transform duration-300" id="modalContent">
-            <button onclick="closeModalAction(event)" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full transition-colors backdrop-blur-sm z-20 outline-none"><i class="fa-solid fa-xmark"></i></button>
+            <button onclick="closeModalAction(event)" class="absolute top-4 right-4 text-white bg-black/50 hover:bg-black w-8 h-8 sm:w-10 sm:h-10 flex items-center justify-center rounded-full transition-colors backdrop-blur-sm z-20 outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
             
             <div class="md:w-2/5 h-48 md:h-auto relative bg-black shrink-0">
                 <img id="modalImage" src="" class="w-full h-full object-cover opacity-80">
                 <div class="absolute inset-0 bg-gradient-to-t from-[#141414] md:bg-gradient-to-r md:from-transparent md:to-[#141414]"></div>
             </div>
             <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll">
-                <h3 id="modalTitle" class="text-xl sm:text-3xl font-black text-white mb-3"></h3>
+                <h3 id="modalTitle" class="text-lg sm:text-3xl font-black text-white mb-3 leading-tight"></h3>
                 <div class="flex flex-wrap gap-2 mb-4 sm:mb-6" id="modalTags"></div>
                 
                 <div class="mb-4 sm:mb-6">
-                    <h4 class="text-xs sm:text-sm font-bold text-gray-500 mb-2 uppercase">وصف اللعبة</h4>
-                    <ul id="modalDesc" class="space-y-1 text-sm sm:text-base text-gray-300"></ul>
+                    <h4 class="text-[10px] sm:text-sm font-bold text-gray-500 mb-2 uppercase">وصف اللعبة</h4>
+                    <ul id="modalDesc" class="space-y-1 text-xs sm:text-base text-gray-300"></ul>
                 </div>
                 <div class="mb-6">
-                    <h4 class="text-xs sm:text-sm font-bold text-gray-500 mb-2 uppercase">المميزات</h4>
-                    <ul id="modalFeatures" class="space-y-1 text-sm sm:text-base text-gray-300"></ul>
+                    <h4 class="text-[10px] sm:text-sm font-bold text-gray-500 mb-2 uppercase">المميزات</h4>
+                    <ul id="modalFeatures" class="space-y-1 text-xs sm:text-base text-gray-300"></ul>
                 </div>
 
                 <div class="mt-auto pt-4 sm:pt-6 border-t border-[#2a2a2a]">
                     <div class="mb-4 flex flex-wrap gap-2">
-                        <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-xs font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-xbox-main"></div> الدفع عبر CliQ</span>
-                        <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-xs font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> محافظ إلكترونية</span>
+                        <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-[10px] sm:text-xs font-bold text-gray-400 flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-xbox-main"></div> CliQ</span>
+                        <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-[10px] sm:text-xs font-bold text-gray-400 flex items-center gap-1"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> محافظ</span>
                     </div>
 
-                    <div class="flex flex-col sm:flex-row items-center justify-between gap-4 sm:gap-6 mb-4 sm:mb-6">
+                    <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
                         <div class="w-full sm:w-auto text-right">
-                            <div class="text-xs sm:text-sm text-gray-500 mb-0.5">السعر النهائي</div>
-                            <div class="flex items-baseline gap-2">
+                            <div class="text-[10px] sm:text-sm text-gray-500 mb-0.5">السعر النهائي</div>
+                            <div class="flex items-baseline gap-1.5">
                                 <span id="modalPrice" class="text-2xl sm:text-4xl font-black text-xbox-light"></span>
-                                <span class="text-sm sm:text-xl font-bold text-gray-400">JOD</span>
-                                <span id="modalOriginalPrice" class="text-xs sm:text-lg text-gray-600 line-through ml-2"></span>
+                                <span class="text-xs sm:text-xl font-bold text-gray-400">JOD</span>
+                                <span id="modalOriginalPrice" class="text-[10px] sm:text-lg text-gray-600 line-through ml-2"></span>
                             </div>
                         </div>
                     </div>
@@ -250,17 +253,17 @@
                             <i class="fa-solid fa-cart-plus text-lg"></i> إضافة إلى السلة
                         </button>
                         <div class="flex flex-row gap-2 w-full">
-                            <button id="modalBuyBtn" class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#25D366] to-[#1da851] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
+                            <button id="modalBuyBtn" class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#25D366] to-[#1da851] text-white px-2 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-base shadow-lg active:scale-95 transition-all outline-none">
                                 <i class="fa-brands fa-whatsapp text-lg"></i> واتساب
                             </button>
-                            <button id="modalMessengerBtn" class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#0064C8] text-white px-3 sm:px-4 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
+                            <button id="modalMessengerBtn" class="flex-1 flex items-center justify-center gap-2 bg-gradient-to-r from-[#0084FF] to-[#0064C8] text-white px-2 py-2.5 sm:py-3 rounded-xl font-bold text-xs sm:text-base shadow-lg active:scale-95 transition-all outline-none">
                                 <i class="fa-brands fa-facebook-messenger text-lg"></i> ماسنجر
                             </button>
                         </div>
                     </div>
 
-                    <div id="modalOutOfStockBtn" class="hidden w-full text-center bg-red-900/40 border-2 border-red-600 text-red-500 px-6 py-3 sm:py-4 rounded-xl font-black text-lg sm:text-xl cursor-not-allowed">
-                        <i class="fa-solid fa-ban mr-2"></i> نفذت الكمية حالياً
+                    <div id="modalOutOfStockBtn" class="hidden w-full text-center bg-red-900/40 border border-red-600 text-red-500 px-4 py-3 rounded-xl font-black text-sm sm:text-xl cursor-not-allowed">
+                        <i class="fa-solid fa-ban mr-1 sm:mr-2"></i> نفذت الكمية حالياً
                     </div>
                 </div>
             </div>
@@ -270,22 +273,22 @@
     <!-- Modal السلة -->
     <div id="cartModal" class="fixed inset-0 z-[60] hidden items-end sm:items-center justify-center bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-lg rounded-t-[2rem] sm:rounded-[2rem] shadow-2xl relative flex flex-col max-h-[85vh] transform translate-y-full sm:translate-y-0 sm:scale-95 transition-transform duration-300" id="cartContent">
-            <div class="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
-                <h3 class="text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-xbox-main mt-0.5"></i> <span class="pt-1">سلة المشتريات</span></h3>
-                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full transition-colors outline-none"><i class="fa-solid fa-xmark"></i></button>
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-[#2a2a2a]">
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-basket-shopping text-xbox-main mt-0.5"></i> <span class="pt-1">سلة المشتريات</span></h3>
+                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full transition-colors outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div id="cartItemsList" class="p-5 overflow-y-auto flex-1 space-y-3 modal-scroll"></div>
-            <div class="p-5 border-t border-[#2a2a2a] bg-[#0d0d0d] rounded-b-[2rem]">
-                <div class="flex justify-between items-center mb-5">
-                    <span class="text-gray-400 font-bold">المجموع الكلي:</span>
-                    <div class="text-2xl sm:text-3xl font-black text-xbox-light"><span id="cartTotalSum">0</span> <span class="text-sm sm:text-lg">JOD</span></div>
+            <div id="cartItemsList" class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-3 modal-scroll"></div>
+            <div class="p-4 sm:p-5 border-t border-[#2a2a2a] bg-[#0d0d0d] rounded-b-[2rem]">
+                <div class="flex justify-between items-center mb-4">
+                    <span class="text-xs sm:text-sm text-gray-400 font-bold">المجموع الكلي:</span>
+                    <div class="text-xl sm:text-3xl font-black text-xbox-light"><span id="cartTotalSum">0</span> <span class="text-[10px] sm:text-lg">JOD</span></div>
                 </div>
-                <div class="flex flex-col gap-2.5">
-                    <button onclick="checkoutCart('whatsapp')" class="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-6 py-3 rounded-xl font-black text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
-                        <i class="fa-brands fa-whatsapp text-lg sm:text-xl"></i> إرسال الطلب عبر واتساب
+                <div class="flex flex-col gap-2">
+                    <button onclick="checkoutCart('whatsapp')" class="w-full flex items-center justify-center gap-2 bg-[#25D366] hover:bg-[#20bd5a] text-white px-4 py-3 rounded-xl font-black text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none border-0">
+                        <i class="fa-brands fa-whatsapp text-lg"></i> الطلب عبر واتساب
                     </button>
-                    <button onclick="checkoutCart('messenger')" class="w-full flex items-center justify-center gap-2 bg-[#0084FF] hover:bg-[#0074E0] text-white px-6 py-3 rounded-xl font-black text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
-                        <i class="fa-brands fa-facebook-messenger text-lg sm:text-xl"></i> إرسال عبر ماسنجر
+                    <button onclick="checkoutCart('messenger')" class="w-full flex items-center justify-center gap-2 bg-[#0084FF] hover:bg-[#0074E0] text-white px-4 py-3 rounded-xl font-black text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none border-0">
+                        <i class="fa-brands fa-facebook-messenger text-lg"></i> الطلب عبر ماسنجر
                     </button>
                 </div>
             </div>
@@ -294,44 +297,44 @@
 
     <!-- Modal الأسئلة الشائعة -->
     <div id="faqModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-2xl rounded-3xl shadow-2xl relative flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="faqContent">
-            <div class="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
-                <h3 class="text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-circle-question text-xbox-main mt-0.5"></i> الأسئلة الشائعة</h3>
-                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full outline-none"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-2xl rounded-[2rem] shadow-2xl relative flex flex-col max-h-[85vh] transform scale-95 transition-transform duration-300" id="faqContent">
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-[#2a2a2a]">
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-circle-question text-xbox-main mt-0.5"></i> الأسئلة الشائعة</h3>
+                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            <div class="p-6 overflow-y-auto modal-scroll space-y-4">
-                <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-[#333]">
-                    <h4 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> كيف أستلم اللعبة بعد الدفع؟</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">بمجرد إتمام الدفع عبر الواتساب أو الماسنجر، سيتم إرسال اللعبة لك مباشرة (سواء كانت كود أو حساب) مع خطوات التفعيل.</p>
+            <div class="p-4 sm:p-6 overflow-y-auto modal-scroll space-y-3 sm:space-y-4">
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> كيف أستلم اللعبة بعد الدفع؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">بمجرد إتمام الدفع عبر الواتساب أو الماسنجر، سيتم إرسال اللعبة لك مباشرة (كود أو حساب) مع خطوات التفعيل.</p>
                 </div>
-                <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-[#333]">
-                    <h4 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> هل الألعاب أصلية؟</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">نعم، جميع الألعاب والاشتراكات أصلية 100% ومضمونة للعمل على أجهزة إكس بوكس بدون أي مشاكل.</p>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> هل الألعاب أصلية؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">نعم، جميع الألعاب والاشتراكات أصلية 100% ومضمونة للعمل على أجهزة إكس بوكس بدون أي مشاكل.</p>
                 </div>
-                <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-[#333]">
-                    <h4 class="text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> ماذا أفعل إذا واجهتني مشكلة في التفعيل؟</h4>
-                    <p class="text-gray-400 text-sm leading-relaxed">فريق الدعم الفني لدينا متواجد دائماً لمساعدتك خطوة بخطوة، ونضمن لك عمل اللعبة بكفاءة تامة أو تعويضك.</p>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> ماذا أفعل إذا واجهتني مشكلة؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">فريق الدعم الفني متواجد دائماً لمساعدتك خطوة بخطوة، ونضمن لك عمل اللعبة بكفاءة تامة أو تعويضك.</p>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal آراء العملاء -->
+    <!-- Modal آراء العملاء تم إصلاحه (مستطيلات فوق بعض عالموبايل) -->
     <div id="reviewsModal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-2xl rounded-3xl shadow-2xl relative flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="reviewsContent">
-            <div class="flex items-center justify-between p-5 border-b border-[#2a2a2a]">
-                <h3 class="text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-comments text-xbox-main mt-0.5"></i> آراء العملاء</h3>
-                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full outline-none"><i class="fa-solid fa-xmark"></i></button>
+        <div class="bg-[#141414] border border-[#2a2a2a] w-full max-w-2xl rounded-[2rem] shadow-2xl relative flex flex-col max-h-[90vh] transform scale-95 transition-transform duration-300" id="reviewsContent">
+            <div class="flex items-center justify-between p-4 sm:p-5 border-b border-[#2a2a2a]">
+                <h3 class="text-lg sm:text-xl font-black text-white flex items-center gap-2"><i class="fa-solid fa-comments text-xbox-main mt-0.5"></i> آراء العملاء</h3>
+                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
-            <div class="p-6 overflow-y-auto modal-scroll flex-1 bg-[#0d0d0d]" id="reviewsList"></div>
+            <div class="p-4 sm:p-6 overflow-y-auto modal-scroll flex-1 bg-[#0d0d0d]" id="reviewsList"></div>
 
-            <div class="p-5 border-t border-[#2a2a2a] bg-[#141414] rounded-b-3xl">
-                <h4 class="text-white font-bold mb-3 text-sm">أضف رأيك:</h4>
+            <div class="p-4 sm:p-5 border-t border-[#2a2a2a] bg-[#141414] rounded-b-[2rem]">
+                <h4 class="text-white font-bold mb-3 text-xs sm:text-sm">أضف رأيك:</h4>
                 
-                <div class="flex items-center gap-2 mb-4">
-                    <span class="text-sm text-gray-400">تقييمك:</span>
-                    <div class="flex text-yellow-500 text-xl cursor-pointer">
+                <div class="flex items-center gap-2 mb-3">
+                    <span class="text-xs sm:text-sm text-gray-400">تقييمك:</span>
+                    <div class="flex text-yellow-500 text-lg sm:text-xl cursor-pointer">
                         <i class="fa-solid fa-star star-btn" data-val="1" onclick="setRating(1)"></i>
                         <i class="fa-solid fa-star star-btn" data-val="2" onclick="setRating(2)"></i>
                         <i class="fa-solid fa-star star-btn" data-val="3" onclick="setRating(3)"></i>
@@ -340,29 +343,30 @@
                     </div>
                 </div>
 
-                <div class="flex flex-col sm:flex-row gap-2 mb-2">
-                    <input type="text" id="revName" placeholder="الاسم (مطلوب)" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-xbox-main">
-                    <input type="email" id="revEmail" placeholder="الإيميل (مطلوب، ولن يظهر للعامة)" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-xbox-main">
+                <!-- حل مشكلة خروج الإيميل عن الشاشة باستخدام Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2 w-full">
+                    <input type="text" id="revName" placeholder="الاسم (مطلوب)" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-xbox-main">
+                    <input type="email" id="revEmail" placeholder="الإيميل (مطلوب ولن يظهر)" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-xbox-main">
                 </div>
-                <textarea id="revText" placeholder="اكتب رأيك أو تجربتك معنا... (اختياري)" rows="2" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-xbox-main mb-3 resize-none"></textarea>
-                <button onclick="submitReview()" class="w-full bg-xbox-main hover:bg-xbox-light text-white font-bold py-2.5 rounded-lg transition-colors text-sm flex justify-center items-center gap-2 outline-none">
+                <textarea id="revText" placeholder="اكتب رأيك أو تجربتك معنا... (اختياري)" rows="2" class="w-full bg-[#1a1a1a] border border-[#333] text-white rounded-lg px-3 py-2 text-xs sm:text-sm focus:outline-none focus:border-xbox-main mb-3 resize-none"></textarea>
+                <button onclick="submitReview()" class="w-full bg-xbox-main hover:bg-xbox-light text-white font-bold py-2.5 rounded-xl transition-colors text-sm flex justify-center items-center gap-2 outline-none border-0">
                     <i class="fa-solid fa-paper-plane"></i> إرسال التقييم
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- الأزرار العائمة النظيفة تماماً بدون أي إطار -->
-    <div class="fixed bottom-5 right-5 z-40 flex flex-col gap-2 items-center">
-        <button onclick="openCart()" class="relative bg-xbox-main text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(16,124,16,0.4)] hover:scale-110 transition-transform flex items-center justify-center outline-none border-none ring-0">
-            <i class="fa-solid fa-basket-shopping text-xl"></i>
-            <span id="cartBadge" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white text-[10px] font-bold w-5 h-5 flex items-center justify-center rounded-full hidden border-none outline-none ring-0">0</span>
+    <!-- الأزرار العائمة (بدون أي إطارات إطلاقاً) -->
+    <div class="fixed bottom-4 sm:bottom-5 right-4 sm:right-5 z-40 flex flex-col gap-2 items-center">
+        <button onclick="openCart()" class="bg-xbox-main text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-[0_4px_12px_rgba(16,124,16,0.5)] flex items-center justify-center border-0 outline-none relative" style="border: none !important; outline: none !important;">
+            <i class="fa-solid fa-basket-shopping text-lg sm:text-xl"></i>
+            <span id="cartBadge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[9px] sm:text-[10px] font-bold w-4 h-4 sm:w-5 sm:h-5 flex items-center justify-center rounded-full hidden border-0" style="border: none !important;">0</span>
         </button>
-        <button onclick="openMessengerGeneral()" class="bg-[#0084FF] text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(0,132,255,0.4)] hover:scale-110 transition-transform flex items-center justify-center mt-1 outline-none border-none ring-0">
-            <i class="fa-brands fa-facebook-messenger text-2xl"></i>
+        <button onclick="openMessengerGeneral()" class="bg-[#0084FF] text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-[0_4px_12px_rgba(0,132,255,0.5)] flex items-center justify-center mt-1 border-0 outline-none" style="border: none !important; outline: none !important;">
+            <i class="fa-brands fa-facebook-messenger text-xl sm:text-2xl"></i>
         </button>
-        <button onclick="window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')" class="bg-[#25D366] text-white w-12 h-12 rounded-full shadow-[0_5px_15px_rgba(37,211,102,0.4)] hover:scale-110 transition-transform flex items-center justify-center outline-none border-none ring-0">
-            <i class="fa-brands fa-whatsapp text-2xl"></i>
+        <button onclick="window.open(`https://wa.me/${WHATSAPP_NUMBER}`, '_blank')" class="bg-[#25D366] text-white w-10 h-10 sm:w-12 sm:h-12 rounded-full shadow-[0_4px_12px_rgba(37,211,102,0.5)] flex items-center justify-center border-0 outline-none" style="border: none !important; outline: none !important;">
+            <i class="fa-brands fa-whatsapp text-xl sm:text-2xl"></i>
         </button>
     </div>
 
@@ -465,30 +469,33 @@
             document.getElementById('errorHint').innerText = hint;
         }
 
+        // كارد ذكي ومحمي من التداخل على الموبايل
         function generateCardHTML(game, isSlider = false) {
             const isOutOfStock = game.status === "نفذت الكمية";
-            const outOfStockOverlay = isOutOfStock ? `<div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-red-600 text-white px-2 sm:px-6 py-1 sm:py-2 rounded-full font-black text-[10px] sm:text-lg shadow-[0_0_20px_rgba(220,38,38,0.5)] transform -rotate-6 border border-red-400 whitespace-nowrap">نفذت الكمية</span></div>` : '';
+            const outOfStockOverlay = isOutOfStock ? `<div class="absolute inset-0 bg-black/60 z-20 flex items-center justify-center backdrop-blur-[1px]"><span class="bg-red-600 text-white px-2 sm:px-6 py-1 sm:py-2 rounded-full font-black text-[10px] sm:text-lg shadow-[0_0_20px_rgba(220,38,38,0.5)] transform -rotate-6 border border-red-400">نفذت الكمية</span></div>` : '';
             
-            const sliderClasses = isSlider ? 'flex-none w-[75vw] sm:w-[320px] snap-start' : '';
-            const imgHeight = isSlider ? 'h-48 sm:h-56' : 'h-28 sm:h-56';
-            const cardPadding = isSlider ? 'p-4 sm:p-5' : 'p-2.5 sm:p-5';
-            const marginTop = isSlider ? '-mt-6 sm:-mt-8' : '-mt-4 sm:-mt-8';
-            const titleSize = isSlider ? 'text-base sm:text-lg' : 'text-xs sm:text-lg mb-1 line-clamp-2';
-            const priceSize = isSlider ? 'text-xl sm:text-2xl' : 'text-sm sm:text-2xl';
-            const tagContainer = isSlider ? 'gap-1.5 mb-2' : 'gap-1 mb-1.5';
-            const tagSize = isSlider ? 'text-[10px] px-2 py-1' : 'text-[8px] sm:text-[10px] px-1 py-0.5 sm:px-2 sm:py-1';
-            const btnSize = isSlider ? 'w-9 h-9 sm:w-10 sm:h-10' : 'w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl';
-            const btnIconSize = isSlider ? 'text-xs sm:text-sm' : 'text-[10px] sm:text-sm';
-            const discountClass = isSlider ? 'top-3 right-3 text-[10px] sm:text-xs px-2.5 py-1' : 'top-2 right-2 sm:top-4 sm:right-4 text-[8px] sm:text-xs px-1.5 py-0.5 sm:px-3 sm:py-1';
-            const originalPriceSize = isSlider ? 'text-[10px] sm:text-sm' : 'text-[9px] sm:text-sm';
-            const jodSize = isSlider ? 'text-[10px] sm:text-xs' : 'text-[8px] sm:text-xs';
+            const sliderClasses = isSlider ? 'flex-none w-[70vw] sm:w-[320px] snap-start' : '';
+            const imgHeight = isSlider ? 'h-40 sm:h-56' : 'h-28 sm:h-56';
+            const cardPadding = isSlider ? 'p-3 sm:p-5' : 'p-2 sm:p-5';
+            const marginTop = isSlider ? '-mt-4 sm:-mt-8' : '-mt-4 sm:-mt-8';
+            const titleSize = isSlider ? 'text-sm sm:text-lg' : 'text-[11px] sm:text-lg mb-1 line-clamp-2 leading-tight';
+            const priceSize = isSlider ? 'text-lg sm:text-2xl' : 'text-sm sm:text-2xl';
+            
+            // حماية التاجات من التداخل باستخدام flex-wrap والخطوط الصغيرة
+            const tagContainer = isSlider ? 'gap-1 mb-2' : 'gap-1 mb-1.5 flex-wrap';
+            const tagSize = isSlider ? 'text-[9px] sm:text-[10px] px-1.5 py-0.5' : 'text-[8px] sm:text-[10px] px-1 py-0.5 rounded';
+            const btnSize = isSlider ? 'w-8 h-8 sm:w-10 sm:h-10' : 'w-7 h-7 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl';
+            const btnIconSize = isSlider ? 'text-[10px] sm:text-sm' : 'text-[9px] sm:text-sm';
+            const discountClass = isSlider ? 'top-2 right-2 text-[9px] sm:text-xs px-2 py-0.5' : 'top-1.5 right-1.5 sm:top-3 sm:right-3 text-[8px] sm:text-xs px-1.5 py-0.5 sm:px-2.5 sm:py-1';
 
             const discountBadge = game.discountPercent > 0 && !isOutOfStock 
-                ? `<div class="absolute ${discountClass} bg-red-600 text-white rounded-full font-black shadow-lg z-10 whitespace-nowrap">خصم ${game.discountPercent}%</div>` : '';
+                ? `<div class="absolute ${discountClass} bg-red-600 text-white rounded-full font-black shadow-lg z-10">خصم ${game.discountPercent}%</div>` : '';
                 
-            const originalPriceStr = game.originalPrice ? `<span class="${originalPriceSize} text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
-            const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300 flex items-center whitespace-nowrap"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
-            const arabicTag = game.isArabic ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] rounded text-gray-300 flex items-center whitespace-nowrap"><i class="fa-solid fa-language text-blue-500 ml-0.5 sm:ml-1"></i>ترجمة</span>` : '';
+            const originalPriceStr = game.originalPrice ? `<span class="text-[9px] sm:text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
+            
+            // إزالة whitespace-nowrap من التاجات للسماح لها بالنزول لسطر جديد إذا كانت الشاشة صغيرة جداً
+            const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] text-gray-300 flex items-center w-fit"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
+            const arabicTag = game.isArabic ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] text-gray-300 flex items-center w-fit"><i class="fa-solid fa-language text-blue-500 ml-0.5 sm:ml-1"></i>ترجمة</span>` : '';
 
             return `
                 <div class="game-card bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${isOutOfStock ? 'out-of-stock-card' : ''}" onclick="openModal(${game.id})">
@@ -498,19 +505,19 @@
                         <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent z-10"></div>
                     </div>
                     <div class="${cardPadding} flex-grow flex flex-col ${marginTop} relative z-10">
-                        <h4 class="${titleSize} font-black text-white leading-tight break-words">${game.title}</h4>
-                        <div class="flex flex-wrap ${tagContainer}">${typeTag}${arabicTag}</div>
+                        <h4 class="${titleSize} font-black text-white break-words">${game.title}</h4>
+                        <div class="flex ${tagContainer}">${typeTag}${arabicTag}</div>
                         <div class="mt-auto pt-2 sm:pt-3 border-t border-[#2a2a2a] flex items-center justify-between gap-1">
                             <div class="min-w-0">
                                 ${originalPriceStr}
                                 <div class="flex items-baseline gap-0.5 sm:gap-1 ${isOutOfStock ? 'text-gray-500' : 'text-xbox-light'}">
                                     <span class="${priceSize} font-black truncate">${game.price}</span>
-                                    <span class="${jodSize} font-bold">JOD</span>
+                                    <span class="text-[8px] sm:text-xs font-bold">JOD</span>
                                 </div>
                             </div>
                             <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-                                ${!isOutOfStock ? `<button onclick="event.stopPropagation(); addToCart(${game.id})" class="bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white ${btnSize} flex items-center justify-center transition-colors shadow-lg outline-none" title="إضافة للسلة"><i class="fa-solid fa-cart-plus ${btnIconSize}"></i></button>` : ''}
-                                <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main hover:text-xbox-main'} text-white ${btnSize} flex items-center justify-center transition-colors shadow-lg outline-none"><i class="fa-solid fa-chevron-left ${btnIconSize}"></i></button>
+                                ${!isOutOfStock ? `<button onclick="event.stopPropagation(); addToCart(${game.id})" class="bg-[#1a1a1a] border border-[#333] hover:border-xbox-main hover:text-xbox-main text-white ${btnSize} flex items-center justify-center transition-colors shadow-sm outline-none" title="إضافة للسلة"><i class="fa-solid fa-cart-plus ${btnIconSize}"></i></button>` : ''}
+                                <button class="bg-[#1a1a1a] border border-[#333] ${isOutOfStock ? '' : 'hover:border-xbox-main hover:text-xbox-main'} text-white ${btnSize} flex items-center justify-center transition-colors shadow-sm outline-none"><i class="fa-solid fa-chevron-left ${btnIconSize}"></i></button>
                             </div>
                         </div>
                     </div>
@@ -610,9 +617,9 @@
             if (totalPages <= 1) { paginationElem.innerHTML = ''; }
             else {
                 let html = '';
-                if (currentPage > 1) html += `<button onclick="renderUnifiedGridPage(${currentPage - 1}, ${hideSliders})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-2 rounded-xl font-bold flex items-center gap-1 transition-all whitespace-nowrap outline-none"><i class="fa-solid fa-chevron-right text-xs"></i> <span>السابق</span></button>`;
-                html += `<span class="text-gray-400 text-sm sm:text-base font-bold px-3 sm:px-4 py-2 bg-[#141414] border border-[#2a2a2a] rounded-xl whitespace-nowrap">صفحة ${currentPage} / ${totalPages}</span>`;
-                if (currentPage < totalPages) html += `<button onclick="renderUnifiedGridPage(${currentPage + 1}, ${hideSliders})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-2 rounded-xl font-bold flex items-center gap-1 transition-all whitespace-nowrap outline-none"><span>التالي</span> <i class="fa-solid fa-chevron-left text-xs"></i></button>`;
+                if (currentPage > 1) html += `<button onclick="renderUnifiedGridPage(${currentPage - 1}, ${hideSliders})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold flex items-center gap-1 transition-all whitespace-nowrap outline-none text-xs sm:text-base"><i class="fa-solid fa-chevron-right text-[10px] sm:text-xs"></i> <span>السابق</span></button>`;
+                html += `<span class="text-gray-400 text-xs sm:text-base font-bold px-3 sm:px-4 py-1.5 sm:py-2 bg-[#141414] border border-[#2a2a2a] rounded-lg sm:rounded-xl whitespace-nowrap">صفحة ${currentPage} / ${totalPages}</span>`;
+                if (currentPage < totalPages) html += `<button onclick="renderUnifiedGridPage(${currentPage + 1}, ${hideSliders})" class="bg-[#1a1a1a] hover:bg-xbox-main border border-[#333] hover:border-xbox-main text-white px-3 sm:px-4 py-1.5 sm:py-2 rounded-lg sm:rounded-xl font-bold flex items-center gap-1 transition-all whitespace-nowrap outline-none text-xs sm:text-base"><span>التالي</span> <i class="fa-solid fa-chevron-left text-[10px] sm:text-xs"></i></button>`;
                 paginationElem.innerHTML = html;
             }
 
@@ -679,7 +686,7 @@
             const toast = document.getElementById('toastMsg');
             document.getElementById('toastText').innerText = text;
             document.getElementById('toastIcon').className = `fa-solid ${iconClass} text-xl`;
-            toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 text-white px-6 py-3 rounded-full shadow-2xl z-[100] flex items-center gap-3 transition-all duration-300 opacity-100 translate-y-0 ${bgColorClass}`;
+            toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-2xl z-[100] flex items-center justify-center gap-2 sm:gap-3 transition-all duration-300 opacity-100 translate-y-0 w-[90%] sm:w-auto max-w-md ${bgColorClass}`;
             setTimeout(() => { 
                 toast.classList.remove('opacity-100', 'translate-y-0');
                 toast.classList.add('opacity-0', '-translate-y-10', 'pointer-events-none'); 
@@ -690,7 +697,7 @@
             const textArea = document.createElement("textarea"); textArea.value = messageText; document.body.appendChild(textArea); textArea.select();
             try { 
                 document.execCommand('copy'); 
-                showCustomToast("تم نسخ طلبك بنجاح! ✔️ الصقه في ماسنجر", "fa-clipboard-check", "bg-[#0084FF] border border-blue-400/50"); 
+                showCustomToast("تم نسخ طلبك! الصقه في ماسنجر ✔️", "fa-clipboard-check", "bg-[#0084FF] border border-blue-400/50"); 
                 setTimeout(() => { window.open(MESSENGER_LINK, '_blank'); }, 2000); 
             } 
             catch (err) { window.open(MESSENGER_LINK, '_blank'); }
@@ -737,18 +744,18 @@
             const list = document.getElementById('cartItemsList');
             let total = 0;
             if(CART.length === 0) {
-                list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-basket-shopping text-5xl text-gray-700 mb-4"></i><p class="text-gray-400">سلتك فارغة حالياً</p></div>`;
+                list.innerHTML = `<div class="text-center py-10"><i class="fa-solid fa-basket-shopping text-4xl sm:text-5xl text-gray-700 mb-3 sm:mb-4"></i><p class="text-sm sm:text-base text-gray-400">سلتك فارغة حالياً</p></div>`;
             } else {
                 list.innerHTML = CART.map((item, idx) => {
                     total += item.price;
                     return `
-                        <div class="flex items-center gap-3 sm:gap-4 bg-[#1a1a1a] p-3 rounded-xl border border-[#333]">
-                            <img src="${item.image}" class="w-14 h-14 sm:w-16 sm:h-16 rounded-lg object-cover">
-                            <div class="flex-1">
-                                <h5 class="text-white font-bold line-clamp-1 text-xs sm:text-sm">${item.title}</h5>
-                                <div class="text-xbox-light font-black text-sm">${item.price} JOD <span class="text-gray-500 text-[10px] ml-1">${item.type}</span></div>
+                        <div class="flex items-center gap-2 sm:gap-4 bg-[#1a1a1a] p-2.5 sm:p-3 rounded-xl border border-[#333]">
+                            <img src="${item.image}" class="w-12 h-12 sm:w-16 sm:h-16 rounded-lg object-cover">
+                            <div class="flex-1 min-w-0">
+                                <h5 class="text-white font-bold line-clamp-1 text-[11px] sm:text-sm">${item.title}</h5>
+                                <div class="text-xbox-light font-black text-xs sm:text-sm">${item.price} JOD <span class="text-gray-500 text-[8px] sm:text-[10px] ml-1 truncate">${item.type}</span></div>
                             </div>
-                            <button onclick="removeFromCart(${idx})" class="w-8 h-8 flex items-center justify-center bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-colors outline-none"><i class="fa-solid fa-trash-can"></i></button>
+                            <button onclick="removeFromCart(${idx})" class="w-7 h-7 sm:w-8 sm:h-8 flex items-center justify-center bg-red-900/30 text-red-500 hover:bg-red-600 hover:text-white rounded-lg transition-colors outline-none shrink-0"><i class="fa-solid fa-trash-can text-xs sm:text-sm"></i></button>
                         </div>
                     `;
                 }).join('');
@@ -786,14 +793,14 @@
             document.getElementById('modalOriginalPrice').textContent = game.originalPrice ? `${game.originalPrice} JOD` : '';
 
             const descArray = game.description ? game.description.split('|') : ["لا يوجد وصف."];
-            document.getElementById('modalDesc').innerHTML = descArray.map(d => `<li class="flex items-start gap-2 mb-1.5"><i class="fa-solid fa-circle text-[6px] text-xbox-main mt-2.5 shrink-0"></i><span class="text-gray-300 leading-relaxed text-sm md:text-base">${d.trim()}</span></li>`).join('');
+            document.getElementById('modalDesc').innerHTML = descArray.map(d => `<li class="flex items-start gap-2 mb-1.5"><i class="fa-solid fa-circle text-[4px] sm:text-[6px] text-xbox-main mt-2 sm:mt-2.5 shrink-0"></i><span class="text-gray-300 leading-relaxed text-xs sm:text-base">${d.trim()}</span></li>`).join('');
 
             let tagsHtml = '';
-            if (game.type) tagsHtml += `<span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-[#1a1a1a] text-xbox-light px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-xbox-main/30 whitespace-nowrap"><i class="fa-solid fa-key"></i> ${game.type}</span>`;
-            if (game.isArabic) tagsHtml += `<span class="inline-flex items-center gap-1.5 text-xs sm:text-sm font-bold bg-[#1a1a1a] text-blue-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-xl border border-blue-900/30 whitespace-nowrap"><i class="fa-solid fa-language"></i> ترجمة عربية</span>`;
+            if (game.type) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-sm font-bold bg-[#1a1a1a] text-xbox-light px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-xbox-main/30 whitespace-nowrap"><i class="fa-solid fa-key"></i> ${game.type}</span>`;
+            if (game.isArabic) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-[10px] sm:text-sm font-bold bg-[#1a1a1a] text-blue-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg sm:rounded-xl border border-blue-900/30 whitespace-nowrap"><i class="fa-solid fa-language"></i> ترجمة عربية</span>`;
             document.getElementById('modalTags').innerHTML = tagsHtml;
 
-            document.getElementById('modalFeatures').innerHTML = game.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-xbox-main shrink-0"></i> <span class="text-gray-300">${f.trim()}</span></li>`).join('');
+            document.getElementById('modalFeatures').innerHTML = game.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-xbox-main shrink-0 text-xs sm:text-base"></i> <span class="text-gray-300 text-xs sm:text-base">${f.trim()}</span></li>`).join('');
 
             const actionsDiv = document.getElementById('modalActionButtons');
             const outOfStockDiv = document.getElementById('modalOutOfStockBtn');
@@ -834,12 +841,13 @@
             });
         }
 
+        // حذف التقييمات الوهمية تماماً
         function renderReviews() {
             let reviews = JSON.parse(localStorage.getItem('xb_reviews')) || [];
             const list = document.getElementById('reviewsList');
             
             if(reviews.length === 0) {
-                list.innerHTML = '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-comment-dots text-4xl mb-3 opacity-50"></i><p>لا توجد تقييمات حتى الآن.<br>كن أول من يشاركنا رأيه!</p></div>';
+                list.innerHTML = '<div class="text-center text-gray-500 py-10"><i class="fa-solid fa-comment-dots text-3xl sm:text-4xl mb-3 opacity-50"></i><p class="text-xs sm:text-base">لا توجد تقييمات حتى الآن.<br>كن أول من يشاركنا رأيه!</p></div>';
             } else {
                 list.innerHTML = reviews.map(r => {
                     let starsHtml = '';
@@ -848,14 +856,14 @@
                         if(i < rating) starsHtml += '<i class="fa-solid fa-star"></i>';
                         else starsHtml += '<i class="fa-solid fa-star text-gray-600"></i>';
                     }
-                    let commentText = r.text ? `<p class="text-gray-400 text-sm mt-2 leading-relaxed">${r.text}</p>` : '';
+                    let commentText = r.text ? `<p class="text-gray-400 text-xs sm:text-sm mt-2 leading-relaxed">${r.text}</p>` : '';
 
                     return `
-                    <div class="bg-[#1a1a1a] p-4 rounded-2xl border border-[#333] mb-3">
+                    <div class="bg-[#1a1a1a] p-3 sm:p-4 rounded-xl sm:rounded-2xl border border-[#333] mb-3">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-xbox-main flex items-center justify-center text-white font-bold">${r.name.charAt(0)}</div>
-                            <h4 class="text-white font-bold text-sm">${r.name}</h4>
-                            <div class="text-yellow-500 text-xs ml-auto flex gap-0.5">${starsHtml}</div>
+                            <div class="w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-xbox-main flex items-center justify-center text-white font-bold text-xs sm:text-sm">${r.name.charAt(0)}</div>
+                            <h4 class="text-white font-bold text-xs sm:text-sm">${r.name}</h4>
+                            <div class="text-yellow-500 text-[10px] sm:text-xs ml-auto flex gap-0.5">${starsHtml}</div>
                         </div>
                         ${commentText}
                     </div>
@@ -892,7 +900,7 @@
             setRating(5);
             
             renderReviews();
-            showCustomToast('تم إرسال تقييمك للإدارة، شكراً لك!', 'fa-check', 'bg-xbox-main');
+            showCustomToast('تم إرسال تقييمك بنجاح، شكراً لك!', 'fa-check', 'bg-xbox-main');
         }
 
         function openReviewsModal() {
@@ -908,7 +916,7 @@
 
         function closeModalAction(event) {
             if(event) event.stopPropagation();
-            goHome(false); // تم التعديل للإغلاق المباشر والعودة للرئيسية لحل مشكلة السهم
+            goHome(false); 
         }
 
         function openModalDOM(modalId, contentId = null, extraTransformClass = null) {
@@ -952,7 +960,7 @@
             closeAllModals();
 
             if (hash === '') goHome(false);
-            else if (hash.startsWith('#cat=')) showGridCategory(hash.replace('#cat=', ''), document.getElementById('gridTitle').innerText, false);
+            else if (hash.startsWith('#cat=')) showGridCategory(hash.replace('#cat=', ''), document.getElementById('gridTitle').innerText || 'عروض', false);
             else if (hash.startsWith('#page=')) renderUnifiedGridPage(parseInt(hash.replace('#page=', '')), true, false);
             else if (hash === '#cart') openCart();
             else if (hash === '#reviews') openReviewsModal();
@@ -975,7 +983,7 @@
 
         ['gameModal', 'cartModal', 'faqModal', 'reviewsModal'].forEach(id => {
             const el = document.getElementById(id);
-            if(el) el.addEventListener('click', function(e) { if (e.target === this) history.back(); });
+            if(el) el.addEventListener('click', function(e) { if (e.target === this) goHome(false); });
         });
 
         window.onload = fetchGames;
