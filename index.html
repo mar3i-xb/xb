@@ -270,9 +270,10 @@
                 <div class="absolute inset-0 bg-gradient-to-t from-[#141414] md:bg-gradient-to-r md:from-transparent md:to-[#141414]"></div>
             </div>
             
-            <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll">
-                <!-- طلب مسبق (داخل النافذة) أنيق وصغير -->
-                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-lg mb-2 w-max flex items-center gap-1.5 shadow-sm">
+            <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll relative">
+                
+                <!-- طلب مسبق (داخل النافذة) عرض كامل -->
+                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-[11px] sm:text-sm font-black px-4 py-2 rounded-xl mb-3 w-full flex items-center justify-center gap-2 shadow-sm">
                     <i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق
                 </div>
 
@@ -300,9 +301,11 @@
                     
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
                         <div class="w-full sm:w-auto text-right">
-                            <div class="text-[10px] sm:text-sm text-gray-500 mb-0.5 flex items-center gap-2">
+                            <div class="text-[10px] sm:text-sm text-gray-500 mb-1 flex flex-wrap items-center gap-2">
                                 السعر النهائي
                                 <span id="modalDiscountBadge" class="hidden bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md"></span>
+                                <!-- العداد التنازلي داخل النافذة -->
+                                <span id="modalTimerBadge" class="hidden bg-black/50 border border-gray-600 text-amber-400 text-[8px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"></span>
                             </div>
                             <div class="flex items-baseline gap-1.5">
                                 <span id="modalPrice" class="text-2xl sm:text-4xl font-black text-xbox-light"></span>
@@ -496,6 +499,30 @@
             `).join('');
         }
 
+        // دالة لتحويل التاريخ (يوم/شهر/سنة) إلى ثواني (Timestamp)
+        function parseCustomDate(dateStr) {
+            if (!dateStr) return null;
+            let parts = dateStr.split('/');
+            if (parts.length === 3) {
+                let day = parseInt(parts[0], 10);
+                let month = parseInt(parts[1], 10) - 1; 
+                let year = parseInt(parts[2], 10);
+                let d = new Date(year, month, day, 23, 59, 59); // ينتهي بآخر لحظة في اليوم
+                return d.getTime();
+            }
+            return null;
+        }
+
+        // دالة إنشاء نص العداد التنازلي
+        function getTimerFormat(targetMs) {
+            let diff = targetMs - Date.now();
+            if (diff <= 0) return null;
+            let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+            let mins = Math.floor((diff / 1000 / 60) % 60);
+            return `${days}ي : ${hours}س : ${mins}د`;
+        }
+
         function fetchGames() {
             renderCategoriesDropdown();
             Papa.parse(GOOGLE_SHEET_CSV_URL, {
@@ -507,10 +534,22 @@
                         let discountedPrice = parseFloat(row.price);
                         let finalP = 0; let oldP = null; let dPerc = 0;
 
+                        // معالجة التاريخ والوقت
+                        let targetDateMs = parseCustomDate(row['تاريخ']);
+                        let isExpired = targetDateMs ? Date.now() > targetDateMs : false;
+
+                        // حساب الأسعار والخصومات
                         if (!isNaN(basePrice)) {
                             if (!isNaN(discountedPrice) && discountedPrice > 0 && discountedPrice < basePrice) {
-                                finalP = discountedPrice; oldP = basePrice;
-                                dPerc = Math.round(((basePrice - discountedPrice) / basePrice) * 100);
+                                // إذا كان هناك تاريخ وانتهى الوقت، نلغي الخصم ونعتمد السعر الأصلي فقط
+                                if (targetDateMs && isExpired) {
+                                    finalP = basePrice;
+                                    oldP = null;
+                                    dPerc = 0;
+                                } else {
+                                    finalP = discountedPrice; oldP = basePrice;
+                                    dPerc = Math.round(((basePrice - discountedPrice) / basePrice) * 100);
+                                }
                             } else { finalP = basePrice; }
                         } else if (!isNaN(discountedPrice)) { finalP = discountedPrice; }
 
@@ -518,8 +557,11 @@
                         let isNewGame = row.is_new && (row.is_new.trim() === "نعم" || row.is_new.trim().toUpperCase() === "TRUE");
                         let statusText = row.status && (row.status.trim() === "نفذت الكمية" || row.status.trim().toUpperCase() === "TRUE") ? "نفذت الكمية" : "";
 
-                        // استخراج حالة الطلب المسبق من الشيت
+                        // استخراج حالة الطلب المسبق من الشيت (وإلغاؤها إذا انتهى الوقت)
                         let isPreOrder = row['طلب مسبق'] && (row['طلب مسبق'].toString().trim().toUpperCase() === "TRUE" || row['طلب مسبق'].toString().trim() === "نعم");
+                        if (isPreOrder && targetDateMs && isExpired) {
+                            isPreOrder = false; // ينتهي الطلب المسبق بانتهاء التاريخ
+                        }
 
                         let isArabic = false;
                         let arabicVal = row.arabic !== undefined ? row.arabic : row.region;
@@ -553,7 +595,7 @@
                             status: statusText, image: row.image || "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800",
                             features: [...new Set(mappedFeatures)], description: row.description || "",
                             autoTags: autoSearchTags, isNew: isNewGame, clicks: clicks,
-                            isPreOrder: isPreOrder
+                            isPreOrder: isPreOrder, targetDateMs: targetDateMs // تمرير التاريخ
                         };
                     }).reverse();
 
@@ -587,17 +629,22 @@
             const sliderClasses = isSlider ? 'flex-none w-[75vw] sm:w-[320px] snap-start' : '';
             const imgHeight = isSlider ? 'h-40 sm:h-56' : 'h-28 sm:h-48';
             const cardPadding = isSlider ? 'p-3 sm:p-5' : 'p-2 sm:p-4';
-            const marginTop = isSlider ? '-mt-4 sm:-mt-8' : '-mt-4 sm:-mt-6';
-            const titleSize = isSlider ? 'text-sm sm:text-lg' : 'text-[11px] sm:text-base mb-1 truncate';
+            const marginTop = isSlider ? '' : ''; // تم إزالة الـ margin-top السالب لترتيب الشريط الجديد
+            const titleSize = isSlider ? 'text-sm sm:text-lg mt-2' : 'text-[11px] sm:text-base mt-2 mb-1 truncate';
             const priceSize = isSlider ? 'text-lg sm:text-2xl' : 'text-sm sm:text-xl';
             const tagContainer = isSlider ? 'gap-1 mb-2 flex-wrap' : 'gap-1 mb-1 flex-wrap';
             const tagSize = isSlider ? 'text-[9px] sm:text-[10px] px-1.5 py-0.5 rounded' : 'text-[8px] sm:text-[10px] px-1 py-0.5 rounded';
             const btnSize = isSlider ? 'w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl' : 'w-6 h-6 sm:w-9 sm:h-9 rounded flex-shrink-0';
             const btnIconSize = isSlider ? 'text-[10px] sm:text-sm' : 'text-[8px] sm:text-xs';
             
-            // خصم على اليمين ، طلب مسبق على اليسار 
+            // الخصم في أعلى اليمين
             const discountBadge = game.discountPercent > 0 && !isOutOfStock ? `<div class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 whitespace-nowrap">خصم ${game.discountPercent}%</div>` : '';
-            const preOrderBadge = game.isPreOrder ? `<div class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-gradient-to-r from-yellow-600 to-amber-500 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 whitespace-nowrap flex items-center gap-1"><i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق</div>` : '';
+            
+            // العداد الزمني أعلى اليسار (إذا كان هناك تاريخ ولم ينتهِ)
+            const timerBadge = (game.targetDateMs && game.targetDateMs > Date.now()) ? `<div class="countdown-timer absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-black/80 backdrop-blur-sm border border-gray-600 text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 flex items-center gap-1" data-target="${game.targetDateMs}"><i class="fa-regular fa-clock text-amber-400"></i> <span>${getTimerFormat(game.targetDateMs)}</span></div>` : '';
+
+            // شريط الطلب المسبق (فوق العنوان وتحت الصورة)
+            const preOrderBanner = game.isPreOrder ? `<div class="bg-gradient-to-r from-yellow-600 to-amber-500 text-white text-[10px] sm:text-xs font-black text-center py-1 sm:py-1.5 w-full flex items-center justify-center gap-1.5 shadow-sm"><i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق</div>` : '';
 
             const originalPriceStr = game.originalPrice ? `<span class="text-[9px] sm:text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
             const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] text-gray-300 flex items-center w-max"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
@@ -607,9 +654,10 @@
                 <div class="game-card bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${isOutOfStock ? 'out-of-stock-card' : ''}" onclick="openModal(${game.id})">
                     <div class="relative ${imgHeight} overflow-hidden shrink-0 w-full">
                         <img src="${game.image}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300">
-                        ${discountBadge}${preOrderBadge}${outOfStockOverlay}
+                        ${discountBadge}${timerBadge}${outOfStockOverlay}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent z-10"></div>
                     </div>
+                    ${preOrderBanner}
                     <div class="${cardPadding} flex-grow flex flex-col ${marginTop} relative z-10 w-full min-w-0">
                         <h4 class="${titleSize} font-black text-white break-words w-full" title="${game.title}">${game.title}</h4>
                         <div class="flex ${tagContainer} w-full">${typeTag}${arabicTag}</div>
@@ -991,6 +1039,15 @@
                 modalDiscountBadge.classList.add('hidden');
             }
 
+            // تفعيل العداد التنازلي داخل النافذة
+            const modalTimerBadge = document.getElementById('modalTimerBadge');
+            if (game.targetDateMs && game.targetDateMs > Date.now()) {
+                modalTimerBadge.innerHTML = `<i class="fa-regular fa-clock"></i> <span class="modal-live-timer" data-target="${game.targetDateMs}">${getTimerFormat(game.targetDateMs)}</span>`;
+                modalTimerBadge.classList.remove('hidden');
+            } else {
+                modalTimerBadge.classList.add('hidden');
+            }
+
             const descArray = game.description ? game.description.split('|') : ["لا يوجد وصف."];
             document.getElementById('modalDesc').innerHTML = descArray.map(d => `<li class="flex items-start gap-2 mb-1.5"><i class="fa-solid fa-circle text-[4px] sm:text-[6px] text-xbox-main mt-2 sm:mt-2.5 shrink-0"></i><span class="text-gray-300 leading-relaxed text-[11px] sm:text-base">${d.trim()}</span></li>`).join('');
 
@@ -1246,6 +1303,32 @@
                 handleFilterChange(true, true, 1, false);
             }
         }
+
+        // نظام تحديث العدادات الزمنية بشكل حي (Live Countdown)
+        setInterval(() => {
+            document.querySelectorAll('.countdown-timer, .modal-live-timer').forEach(el => {
+                let target = parseInt(el.getAttribute('data-target'));
+                if (target) {
+                    let diff = target - Date.now();
+                    if (diff <= 0) {
+                        el.style.display = 'none'; // إخفاء العداد إذا انتهى الوقت
+                    } else {
+                        let days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                        let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                        let mins = Math.floor((diff / 1000 / 60) % 60);
+                        
+                        let formatText = `${days}ي : ${hours}س : ${mins}د`;
+                        
+                        if (el.classList.contains('countdown-timer')) {
+                            let span = el.querySelector('span');
+                            if (span) span.innerText = formatText;
+                        } else {
+                            el.innerText = formatText;
+                        }
+                    }
+                }
+            });
+        }, 60000); // يتم التحديث كل دقيقة لتوفير موارد الجهاز
 
         window.onload = fetchGames;
     </script>
