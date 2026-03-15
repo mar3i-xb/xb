@@ -24,8 +24,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     
     <style>
-        body { background-color: #0d0d0d; color: #f3f4f6; font-family: 'Tajawal', sans-serif; display: flex; flex-direction: column; min-height: 100vh; overflow-x: hidden; width: 100vw; }
-        main { flex: 1; overflow-x: hidden; max-width: 100vw; }
+        html, body { max-width: 100vw; overflow-x: hidden; }
+        body { background-color: #0d0d0d; color: #f3f4f6; font-family: 'Tajawal', sans-serif; display: flex; flex-direction: column; min-height: 100vh; width: 100%; }
+        main { flex: 1; overflow-x: hidden; max-width: 100vw; width: 100%; }
         .glow-bg { position: absolute; top: -10%; left: 50%; transform: translateX(-50%); width: 100%; height: 600px; background: radial-gradient(circle, rgba(16,124,16,0.15) 0%, rgba(13,13,13,0) 70%); z-index: 0; pointer-events: none; }
         .game-card { transition: all 0.3s ease; width: 100%; box-sizing: border-box; }
         .game-card:hover { transform: translateY(-3px); border-color: #107C10; box-shadow: 0 10px 20px -10px rgba(16,124,16,0.3); }
@@ -46,7 +47,7 @@
     </div>
 
     <!-- Header -->
-    <nav class="bg-black/80 border-b border-xbox-dark/30 sticky top-0 z-40 backdrop-blur-xl">
+    <nav class="bg-black/80 border-b border-xbox-dark/30 sticky top-0 z-40 backdrop-blur-xl w-full">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 <div class="flex items-center gap-3 cursor-pointer h-full" onclick="goHome(true)">
@@ -270,9 +271,9 @@
             </div>
             
             <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll">
-                <!-- طلب مسبق (داخل النافذة) -->
-                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-orange-600/20 to-orange-500/20 border border-orange-500/50 text-orange-500 text-xs sm:text-sm font-black text-center py-2 rounded-xl mb-4 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-clock-rotate-left"></i> متاحة للطلب المسبق
+                <!-- طلب مسبق (داخل النافذة) أنيق وصغير -->
+                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-[10px] sm:text-xs font-black px-3 py-1.5 rounded-lg mb-2 w-max flex items-center gap-1.5 shadow-sm">
+                    <i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق
                 </div>
 
                 <h3 id="modalTitle" class="text-lg sm:text-3xl font-black text-white mb-3 leading-tight break-words"></h3>
@@ -301,7 +302,6 @@
                         <div class="w-full sm:w-auto text-right">
                             <div class="text-[10px] sm:text-sm text-gray-500 mb-0.5 flex items-center gap-2">
                                 السعر النهائي
-                                <!-- نسبة الخصم بجانب السعر داخل النافذة -->
                                 <span id="modalDiscountBadge" class="hidden bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md"></span>
                             </div>
                             <div class="flex items-baseline gap-1.5">
@@ -450,7 +450,7 @@
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png";
         const WHATSAPP_NUMBER = "962777276992";
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i";
-        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p_MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         const ADMIN_EMAIL = "mar3i.xb@gmail.com";
 
         const ARABIC_DICTIONARY = {
@@ -553,7 +553,7 @@
                             status: statusText, image: row.image || "https://images.unsplash.com/photo-1605901309584-818e25960b8f?q=80&w=800",
                             features: [...new Set(mappedFeatures)], description: row.description || "",
                             autoTags: autoSearchTags, isNew: isNewGame, clicks: clicks,
-                            isPreOrder: isPreOrder // إضافة خاصية الطلب المسبق
+                            isPreOrder: isPreOrder
                         };
                     }).reverse();
 
@@ -595,11 +595,9 @@
             const btnSize = isSlider ? 'w-8 h-8 sm:w-10 sm:h-10 rounded-lg sm:rounded-xl' : 'w-6 h-6 sm:w-9 sm:h-9 rounded flex-shrink-0';
             const btnIconSize = isSlider ? 'text-[10px] sm:text-sm' : 'text-[8px] sm:text-xs';
             
-            const discountClass = isSlider ? 'top-2 right-2 text-[9px] sm:text-xs px-2 py-0.5' : 'top-1.5 right-1.5 sm:top-2 sm:right-2 text-[8px] sm:text-[10px] px-1.5 py-0.5 sm:px-2 sm:py-1';
-            const discountBadge = game.discountPercent > 0 && !isOutOfStock ? `<div class="absolute ${discountClass} bg-red-600 text-white rounded-full font-black shadow-lg z-10 whitespace-nowrap">خصم ${game.discountPercent}%</div>` : '';
-            
-            // شريط الطلب المسبق للكروت الخارجية
-            const preOrderBanner = game.isPreOrder ? `<div class="absolute bottom-0 left-0 right-0 bg-gradient-to-r from-orange-600/90 to-orange-500/90 backdrop-blur-md text-white text-[9px] sm:text-xs font-black text-center py-1 z-20 shadow-[0_-2px_10px_rgba(234,88,12,0.4)] border-t border-orange-400/50 flex items-center justify-center gap-1.5"><i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق</div>` : '';
+            // خصم على اليمين ، طلب مسبق على اليسار 
+            const discountBadge = game.discountPercent > 0 && !isOutOfStock ? `<div class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 whitespace-nowrap">خصم ${game.discountPercent}%</div>` : '';
+            const preOrderBadge = game.isPreOrder ? `<div class="absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-gradient-to-r from-yellow-600 to-amber-500 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 whitespace-nowrap flex items-center gap-1"><i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق</div>` : '';
 
             const originalPriceStr = game.originalPrice ? `<span class="text-[9px] sm:text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : '';
             const typeTag = game.type ? `<span class="${tagSize} font-bold bg-[#1a1a1a] border border-[#333] text-gray-300 flex items-center w-max"><i class="fa-solid fa-key text-xbox-light ml-0.5 sm:ml-1"></i>${game.type}</span>` : '';
@@ -609,7 +607,7 @@
                 <div class="game-card bg-[#141414] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#2a2a2a] flex flex-col cursor-pointer ${sliderClasses} ${isOutOfStock ? 'out-of-stock-card' : ''}" onclick="openModal(${game.id})">
                     <div class="relative ${imgHeight} overflow-hidden shrink-0 w-full">
                         <img src="${game.image}" class="w-full h-full object-cover opacity-80 hover:opacity-100 transition-opacity duration-300">
-                        ${discountBadge}${outOfStockOverlay}${preOrderBanner}
+                        ${discountBadge}${preOrderBadge}${outOfStockOverlay}
                         <div class="absolute inset-0 bg-gradient-to-t from-[#141414] via-[#141414]/20 to-transparent z-10"></div>
                     </div>
                     <div class="${cardPadding} flex-grow flex flex-col ${marginTop} relative z-10 w-full min-w-0">
@@ -661,6 +659,7 @@
         }
 
         function goHome(pushState = true) {
+            // تفريغ الفلاتر بالكامل
             document.getElementById('searchInput').value = "";
             document.querySelector('input[name="priceSort"][value="all"]').checked = true;
             document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = false);
@@ -672,7 +671,8 @@
             currentGridGames = [...ALL_GAMES];
             renderUnifiedGridPage(1, false, false);
 
-            window.scrollTo({top: 0, behavior: 'smooth'});
+            // الإلغاء للسموث سكرول يمنع المتصفح من الخربطة في أبعاد الجوال عند التبديل
+            window.scrollTo(0, 0); 
             if(pushState) history.pushState({ page: 'home' }, "", window.location.pathname);
         }
 
@@ -1184,6 +1184,14 @@
                 if (hash.startsWith('#page=') && !hash.includes('&')) page = parseInt(hash.replace('#page=', '')) || 1;
             }
 
+            // تصفير الفلاتر في حال كان الرجوع للكل (الرئيسية)
+            if (cat === 'all') {
+                document.getElementById('searchInput').value = "";
+                const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
+                if (allPriceRadio) allPriceRadio.checked = true;
+                document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = false);
+            }
+
             currentCategoryContext = cat;
             let title = "عروض";
             if (cat === 'latest') title = "أحدث الألعاب";
@@ -1215,6 +1223,14 @@
                     if (hash.startsWith('#cat=') && !hash.includes('&')) cat = hash.replace('#cat=', '');
                     if (hash.startsWith('#page=') && !hash.includes('&')) page = parseInt(hash.replace('#page=', '')) || 1;
                 }
+            }
+
+            // تصفير الفلاتر في حال كان الدخول مباشرة للرئيسية
+            if (!isModal && cat === 'all') {
+                document.getElementById('searchInput').value = "";
+                const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
+                if (allPriceRadio) allPriceRadio.checked = true;
+                document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = false);
             }
 
             if (!isModal) {
