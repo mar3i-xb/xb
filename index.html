@@ -499,20 +499,21 @@
             `).join('');
         }
 
-        // دالة ذكية تحول التاريخ والوقت إلى (توقيت الأردن) وتقارنه بتوقيت المستخدم الحالي
+        // دالة آمنة تماماً ضد الأخطاء والحقول الفارغة لتحويل الوقت
         function getJordanTimestamp(dateStr, timeStr) {
-            if (!dateStr) return null;
-            let dateParts = dateStr.split('/');
+            if (!dateStr || typeof dateStr !== 'string' || dateStr.trim() === "") return null;
+            
+            let dateParts = dateStr.trim().split('/');
             if(dateParts.length !== 3) return null;
 
-            let day = dateParts[0].padStart(2, '0');
-            let month = dateParts[1].padStart(2, '0');
-            let year = dateParts[2];
+            let day = dateParts[0].trim().padStart(2, '0');
+            let month = dateParts[1].trim().padStart(2, '0');
+            let year = dateParts[2].trim();
 
             let hour = 23;
             let minute = 59;
 
-            if (timeStr) {
+            if (timeStr && typeof timeStr === 'string' && timeStr.trim() !== "") {
                 let timeMatch = timeStr.trim().toLowerCase().match(/(\d{1,2}):(\d{2})\s*(am|pm)?/);
                 if (timeMatch) {
                     let h = parseInt(timeMatch[1], 10);
@@ -527,15 +528,18 @@
                 }
             }
 
-            // يتم بناء التاريخ مع ربطه بـ Timezone الأردن (+03:00) ليكون عالمياً دقيقاً
             let isoString = `${year}-${month}-${day}T${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}:00+03:00`;
             let d = new Date(isoString);
+            if (isNaN(d.getTime())) return null;
             return d.getTime();
         }
 
         function fetchGames() {
             renderCategoriesDropdown();
-            Papa.parse(GOOGLE_SHEET_CSV_URL, {
+            // إضافة cache-buster قوي لإجبار المتصفح على جلب أحدث بيانات وعدم تخزين حقول ممسوحة
+            const noCacheUrl = GOOGLE_SHEET_CSV_URL + "&t=" + new Date().getTime();
+            
+            Papa.parse(noCacheUrl, {
                 download: true,
                 header: true,
                 complete: function(results) {
@@ -544,13 +548,12 @@
                         let discountedPrice = parseFloat(row.price);
                         let finalP = 0; let oldP = null; let dPerc = 0;
 
-                        // قراءة التاريخ والوقت الجديد وتحويلهم لتوقيت دقيق
                         let targetDateMs = getJordanTimestamp(row['تاريخ'], row['الوقت']);
                         let isExpired = targetDateMs ? Date.now() > targetDateMs : false;
 
                         if (!isNaN(basePrice)) {
                             if (!isNaN(discountedPrice) && discountedPrice > 0 && discountedPrice < basePrice) {
-                                // إذا انتهى الوقت المحدد، يتم تجاهل الخصم واعتماد السعر الأساسي فقط
+                                // إذا انتهى الوقت المحدد (أو لم يكن هناك تاريخ أصلاً، يتم احتساب الخصم بشكل دائم)
                                 if (targetDateMs && isExpired) {
                                     finalP = basePrice;
                                     oldP = null;
@@ -568,7 +571,7 @@
 
                         let isPreOrder = row['طلب مسبق'] && (row['طلب مسبق'].toString().trim().toUpperCase() === "TRUE" || row['طلب مسبق'].toString().trim() === "نعم");
                         if (isPreOrder && targetDateMs && isExpired) {
-                            isPreOrder = false; // إلغاء حالة الطلب المسبق بانتهاء الوقت
+                            isPreOrder = false; 
                         }
 
                         let isArabic = false;
@@ -647,7 +650,6 @@
             const discountBadge = game.discountPercent > 0 && !isOutOfStock ? `<div id="discount-badge-${game.id}" class="absolute top-1.5 right-1.5 sm:top-2 sm:right-2 bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 whitespace-nowrap">خصم ${game.discountPercent}%</div>` : '';
             const timerBadge = (game.targetDateMs && game.targetDateMs > Date.now()) ? `<div id="timer-badge-${game.id}" class="countdown-timer absolute top-1.5 left-1.5 sm:top-2 sm:left-2 bg-black/80 backdrop-blur-sm border border-gray-600 text-white text-[8px] sm:text-[10px] font-bold px-1.5 py-0.5 sm:px-2 sm:py-1 rounded-md shadow-lg z-10 flex items-center gap-1" data-target="${game.targetDateMs}" data-id="${game.id}" data-baseprice="${game.basePrice}"><i class="fa-regular fa-clock text-amber-400"></i> <span></span></div>` : '';
             
-            // شريط الطلب المسبق (فوق العنوان)
             const preOrderBanner = game.isPreOrder ? `<div id="preorder-ribbon-${game.id}" class="bg-gradient-to-r from-yellow-600 to-amber-500 text-white text-[10px] sm:text-xs font-black text-center py-1 sm:py-1.5 w-full flex items-center justify-center gap-1.5 shadow-sm"><i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق</div>` : '';
 
             const originalPriceStr = game.originalPrice ? `<span id="original-price-${game.id}" class="text-[9px] sm:text-sm text-gray-500 line-through block mb-0.5">${game.originalPrice} JOD</span>` : `<span id="original-price-${game.id}" class="hidden"></span>`;
@@ -952,7 +954,6 @@
         function addToCart(gameId) {
             const game = ALL_GAMES.find(g => g.id === gameId);
             if(game && game.status !== "نفذت الكمية") {
-                // التأكد من أن السعر المضاف هو السعر الحالي (يعالج حالة انتهاء الخصم أثناء تصفح العميل)
                 if (game.targetDateMs && Date.now() > game.targetDateMs && game.basePrice) {
                     game.price = game.basePrice;
                 }
@@ -1027,7 +1028,6 @@
             document.getElementById('modalImage').src = game.image;
             document.getElementById('modalTitle').textContent = game.title;
             
-            // تحقق حي لتحديث السعر إذا تم فتح النافذة بعد انتهاء الخصم
             let displayPrice = game.price;
             let displayOrig = game.originalPrice ? `${game.originalPrice} JOD` : "";
             let displayDiscount = game.discountPercent > 0 && !isOutOfStock ? `خصم ${game.discountPercent}%` : "";
@@ -1056,7 +1056,6 @@
                 modalDiscountBadge.classList.add('hidden');
             }
 
-            // العداد التنازلي داخل النافذة
             const modalTimerBadge = document.getElementById('modalTimerBadge');
             if (game.targetDateMs && game.targetDateMs > Date.now()) {
                 modalTimerBadge.innerHTML = `<i class="fa-regular fa-clock"></i> <span></span>`;
@@ -1189,12 +1188,11 @@
             openModalDOM('faqModal', 'faqContent');
         }
 
-        // الإغلاق والنظام الذكي للرجوع (الاحتفاظ بالفلتر بين الصفحات وحذفه عند الرئيسية)
         function safeBack() {
             if (currentPage > 1) {
-                history.back(); // العودة للصفحة السابقة داخل الفلتر
+                history.back();
             } else {
-                goHome(true); // العودة للرئيسية ومسح الفلاتر
+                goHome(true);
             }
         }
 
@@ -1243,7 +1241,6 @@
             const hash = window.location.hash;
             closeAllModals();
 
-            // إذا رجعنا إلى الرئيسية تماماً، نقوم بمسح كامل الفلاتر وإظهار السلايدرات
             if (!hash || hash === '' || hash === '#') {
                 document.getElementById('searchInput').value = "";
                 const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
@@ -1285,7 +1282,6 @@
             if (cat === 'discounts') title = "أحدث الخصومات والعروض";
             document.getElementById('gridTitle').innerText = title;
 
-            // في حال وجود Hash لصفحة أو تصنيف، نقوم بإعادة بناء الصفحة دون مسح الفلاتر المختارة!
             handleFilterChange(true, cat === 'all', page, false);
         });
 
@@ -1332,24 +1328,24 @@
             }
         }
 
-        // دالة التحديث الحي للعدادات الزمنية (تعمل كل ثانية)
         setInterval(() => {
             const now = Date.now();
             document.querySelectorAll('.countdown-timer, .modal-live-timer').forEach(el => {
-                let target = parseInt(el.getAttribute('data-target'));
+                let targetAttr = el.getAttribute('data-target');
+                if (!targetAttr) return;
+                
+                let target = parseInt(targetAttr);
                 let gameId = el.getAttribute('data-id');
                 
                 if (target) {
                     let diff = target - now;
                     if (diff <= 0) {
-                        el.classList.add('hidden'); // إخفاء العداد المنتهي
+                        el.classList.add('hidden');
                         
                         if (gameId) {
-                            // إخفاء شريط الطلب المسبق (في الكارت)
                             let ribbon = document.getElementById('preorder-ribbon-' + gameId);
                             if (ribbon) ribbon.classList.add('hidden');
                             
-                            // إرجاع السعر للأصلي إذا كان هناك خصم وانتهى (في الكارت)
                             let basePrice = el.getAttribute('data-baseprice');
                             if (basePrice && basePrice !== "null") {
                                 let priceValEl = document.getElementById('price-val-' + gameId);
@@ -1362,19 +1358,20 @@
                             }
                         }
                         
-                        // التحديث الحي داخل النافذة (إذا كانت مفتوحة)
                         if (el.classList.contains('modal-live-timer')) {
                              document.getElementById('modalPreOrderBadge')?.classList.add('hidden');
                              document.getElementById('modalDiscountBadge')?.classList.add('hidden');
-                             document.getElementById('modalOriginalPrice').innerText = "";
+                             let modalOrig = document.getElementById('modalOriginalPrice');
+                             if(modalOrig) modalOrig.innerText = "";
+                             
                              let modalBase = el.getAttribute('data-baseprice');
                              if (modalBase && modalBase !== "null") {
-                                 document.getElementById('modalPrice').innerText = modalBase;
+                                 let modPrice = document.getElementById('modalPrice');
+                                 if(modPrice) modPrice.innerText = modalBase;
                              }
                         }
 
                     } else {
-                        // تحديث النص الحي
                         let days = Math.floor(diff / (1000 * 60 * 60 * 24));
                         let hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
                         let mins = Math.floor((diff / 1000 / 60) % 60);
@@ -1389,7 +1386,7 @@
                     }
                 }
             });
-        }, 1000); // تحديث كل ثانية واحدة
+        }, 1000);
 
         window.onload = fetchGames;
     </script>
