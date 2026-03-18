@@ -85,7 +85,7 @@
                 <div class="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none text-gray-500">
                     <i class="fa-solid fa-search"></i>
                 </div>
-                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك، خصم..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-3 sm:py-4 pr-12 pl-4 focus:outline-none focus:border-xbox-main transition-all text-sm sm:text-lg shadow-xl" onkeyup="handleFilterChange(true, true, 1, false)">
+                <input type="text" id="searchInput" placeholder="ابحث عن لعبة، اشتراك، خصم..." class="w-full bg-[#1a1a1a] border-2 border-[#2a2a2a] text-white rounded-2xl py-3 sm:py-4 pr-12 pl-4 focus:outline-none focus:border-xbox-main transition-all text-sm sm:text-lg shadow-xl" onkeyup="handleFilterChange(true, true, 1, true)">
             </div>
 
             <div id="discountBtnContainer" class="max-w-2xl mx-auto mb-5 w-full">
@@ -345,7 +345,7 @@
                     <i class="fa-solid fa-basket-shopping text-xbox-main mt-0.5"></i> 
                     <span class="pt-1">سلة المشتريات</span>
                 </h3>
-                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full transition-colors outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
+                <button onclick="closeModalAction(event)" class="text-gray-400 hover:text-white bg-[#1a1a1a] w-8 h-8 flex items-center justify-center rounded-full transition-colors backdrop-blur-sm outline-none border-0"><i class="fa-solid fa-xmark"></i></button>
             </div>
             
             <div id="cartItemsList" class="p-4 sm:p-5 overflow-y-auto flex-1 space-y-3 modal-scroll"></div>
@@ -382,15 +382,38 @@
             
             <div class="p-4 sm:p-6 overflow-y-auto modal-scroll space-y-3 sm:space-y-4">
                 <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
-                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>كيف أستلم اللعبة بعد الدفع ؟</h4>
-                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">بمجرد إتمام الدفع عبر الواتساب أو الماسنجر ، سيتم إرسال اللعبة لك مباشرة كود أو حساب مع خطوات التفعيل.</p>
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>كيف يمكنني طلب اللعبة ؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">بكل بساطة، يمكنك الطلب عن طريق أزرار الواتساب أو الماسنجر الموجودة داخل صفحة اللعبة أو من سلة المشتريات. سيتم تزويدنا بقائمة ألعابك المختارة تلقائياً لتسهيل خدمتك.</p>
                 </div>
                 <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
-                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> هل الألعاب أصلية؟</h4>
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>ما هي الطرق المعتمدة للدفع ؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">طرق الدفع لدينا محلية (أردنية) وميسرة جداً. يمكنك الدفع عبر المحافظ الإلكترونية المتنوعة، أو من خلال خدمة كليك (CliQ).</p>
+                </div>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>ما هي خيارات الشراء المتاحة لكل لعبة ؟</h4>
+                    <div class="text-gray-400 text-xs sm:text-sm leading-relaxed">
+                        يتوفر لدينا عدة خيارات للشراء وهي:
+                        <ul class="mt-2 space-y-2">
+                            <li><strong class="text-xbox-light">كود رقمي:</strong> سيتم تزويدك به مع شرح التفعيل، أو يتم تفعيله من قبل فريقنا.</li>
+                            <li><strong class="text-xbox-light">حساب جديد:</strong> يتم إنشاء حساب جديد وشراء وتفعيل اللعبة عليه <span class="text-gray-500">(ملاحظة: الحساب مخصص لك فقط)</span>.</li>
+                            <li><strong class="text-xbox-light">شراء مباشر:</strong> يتم الشراء على حسابك الأساسي <span class="text-gray-500">(ملاحظة: يتطلب تسجيل الدخول لحسابك من قبل فريقنا)</span>.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>كيف يمكنني تمييز خيار الشراء لكل لعبة ؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">للتمييز بين الخيارات المتاحة، ستجد على كرت اللعبة الخارجي نوع الشراء إما <span class="text-xbox-light font-bold">(كود رقمي)</span> أو <span class="text-xbox-light font-bold">(شراء مباشر | حساب جديد)</span>. وفي حال لم تجد نوعاً معيناً لا تتردد بالتواصل معنا مباشرة.</p>
+                </div>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>كيف أستلم اللعبة بعد الدفع ؟</h4>
+                    <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">بمجرد تواصلك معنا عبر الواتساب أو الماسنجر وإتمام الدفع، سيتم إرسال اللعبة لك مباشرة (كود، حساب جديد، أو شراء مباشر على حسابك)، وسيتم تزويدك بشرح خطوات التفعيل بوضوح.</p>
+                </div>
+                <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>هل الألعاب أصلية؟</h4>
                     <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">نعم، جميع الألعاب والاشتراكات أصلية 100% ومضمونة للعمل على أجهزة إكس بوكس بدون أي مشاكل.</p>
                 </div>
                 <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333]">
-                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i> ماذا أفعل إذا واجهتني مشكلة؟</h4>
+                    <h4 class="text-sm sm:text-base text-white font-bold mb-2 flex items-center gap-2"><i class="fa-solid fa-q text-xbox-light"></i>ماذا أفعل إذا واجهتني مشكلة؟</h4>
                     <p class="text-gray-400 text-xs sm:text-sm leading-relaxed">فريق الدعم الفني متواجد دائماً لمساعدتك خطوة بخطوة، ونضمن لك عمل اللعبة بكفاءة تامة أو تعويضك.</p>
                 </div>
             </div>
@@ -484,6 +507,9 @@
         const itemsPerPage = 20;
 
         let CART = JSON.parse(localStorage.getItem('xb_cart')) || [];
+        
+        // متغير تتبع الهيستوري الداخلي للموقع
+        let hasInternalHistory = false;
 
         document.getElementById('storeLogo').src = LOGO_URL;
         document.getElementById('footerLogo').src = LOGO_URL;
@@ -499,7 +525,6 @@
             `).join('');
         }
 
-        // دالة آمنة تماماً ضد الأخطاء والحقول الفارغة لتحويل الوقت
         function getJordanTimestamp(dateStr, timeStr) {
             if (!dateStr || typeof dateStr !== 'string' || dateStr.trim() === "") return null;
             
@@ -536,7 +561,6 @@
 
         function fetchGames() {
             renderCategoriesDropdown();
-            // إضافة cache-buster قوي لإجبار المتصفح على جلب أحدث بيانات وعدم تخزين حقول ممسوحة
             const noCacheUrl = GOOGLE_SHEET_CSV_URL + "&t=" + new Date().getTime();
             
             Papa.parse(noCacheUrl, {
@@ -553,7 +577,6 @@
 
                         if (!isNaN(basePrice)) {
                             if (!isNaN(discountedPrice) && discountedPrice > 0 && discountedPrice < basePrice) {
-                                // إذا انتهى الوقت المحدد (أو لم يكن هناك تاريخ أصلاً، يتم احتساب الخصم بشكل دائم)
                                 if (targetDateMs && isExpired) {
                                     finalP = basePrice;
                                     oldP = null;
@@ -725,7 +748,10 @@
             renderUnifiedGridPage(1, false, false);
 
             window.scrollTo(0, 0); 
-            if(pushState) history.pushState({ page: 'home' }, "", window.location.pathname);
+            if(pushState) {
+                history.pushState({ page: 'home' }, "", window.location.pathname);
+                hasInternalHistory = true;
+            }
         }
 
         function showGridCategory(catType, title, pushState = true) {
@@ -741,19 +767,30 @@
             document.getElementById('searchInput').value = "";
 
             handleFilterChange(true, false, 1, false);
-            if(pushState) history.pushState({ view: 'category', type: catType, title: title }, "", '#cat=' + catType);
+            if(pushState) {
+                history.pushState({ view: 'category', type: catType, title: title }, "", '#cat=' + catType);
+                hasInternalHistory = true;
+            }
         }
 
         function navigatePage(newPage) {
             let hash = "";
+            let hasFilters = document.getElementById('searchInput').value.trim() !== "" || 
+                             document.querySelectorAll('.cat-checkbox:checked').length > 0 || 
+                             (document.querySelector('input[name="priceSort"]:checked') && document.querySelector('input[name="priceSort"]:checked').value !== 'all');
+
             if (currentCategoryContext !== 'all') {
                 hash = '#cat=' + currentCategoryContext + '&page=' + newPage;
+            } else if (hasFilters) {
+                hash = '#search&page=' + newPage; 
             } else {
                 hash = "#page=" + newPage;
             }
+            
             history.pushState({ cat: currentCategoryContext, page: newPage }, "", hash || window.location.pathname);
+            hasInternalHistory = true;
 
-            const hideSliders = (currentCategoryContext !== 'all' || document.getElementById('slidersSections').classList.contains('hidden'));
+            const hideSliders = (currentCategoryContext !== 'all' || hasFilters || document.getElementById('slidersSections').classList.contains('hidden'));
             renderUnifiedGridPage(newPage, hideSliders, true);
         }
 
@@ -814,19 +851,19 @@
         }
 
         function applyFiltersAndClose(dropdownId) {
-            handleFilterChange(true, true, 1, false);
+            handleFilterChange(true, true, 1, true);
             toggleDropdown(dropdownId);
         }
 
         function clearPriceSort() {
             document.querySelector('input[name="priceSort"][value="all"]').checked = true;
-            handleFilterChange(true, true, 1, false);
+            handleFilterChange(true, true, 1, true);
             toggleDropdown('priceSortDropdown');
         }
 
         function clearCategories() {
             document.querySelectorAll('.cat-checkbox').forEach(cb => cb.checked = false);
-            handleFilterChange(true, true, 1, false);
+            handleFilterChange(true, true, 1, true);
             toggleDropdown('categoryDropdown');
         }
 
@@ -837,7 +874,7 @@
             }
         });
 
-        function handleFilterChange(render = true, hideTitle = true, targetPage = 1, fromSearch = true) {
+        function handleFilterChange(render = true, hideTitle = true, targetPage = 1, fromUserAction = false) {
             const priceSortEle = document.querySelector('input[name="priceSort"]:checked');
             const priceSortVal = priceSortEle ? priceSortEle.value : 'all';
 
@@ -890,6 +927,12 @@
             if(render) {
                 let hasFilters = queryWords.length > 0 || selectedCats.length > 0 || priceSortVal !== 'all';
                 let hideSliders = currentCategoryContext !== 'all' || hasFilters;
+                let wasHidden = document.getElementById('slidersSections').classList.contains('hidden');
+
+                if (hideSliders && !wasHidden && fromUserAction && currentCategoryContext === 'all') {
+                    history.pushState({ view: 'search' }, "", '#search');
+                    hasInternalHistory = true;
+                }
 
                 if (hideSliders) {
                     document.getElementById('slidersSections').classList.add('hidden');
@@ -904,7 +947,7 @@
                     document.getElementById('slidersSections').classList.remove('hidden');
                 }
 
-                renderUnifiedGridPage(targetPage, hideSliders, !fromSearch);
+                renderUnifiedGridPage(targetPage, hideSliders, !fromUserAction);
             }
         }
 
@@ -972,7 +1015,10 @@
         }
 
         function openCart(pushState = true) {
-            if (pushState) history.pushState({ view: 'cart' }, "", '#cart');
+            if (pushState) {
+                history.pushState({ view: 'cart' }, "", '#cart');
+                hasInternalHistory = true;
+            }
             renderCartItems();
             openModalDOM('cartModal', 'cartContent', 'translate-y-full');
         }
@@ -1102,6 +1148,7 @@
             }
 
             history.pushState({ view: 'game' }, "", '#game');
+            hasInternalHistory = true;
             openModalDOM('gameModal', 'modalContent');
         }
 
@@ -1179,17 +1226,24 @@
 
         function openReviewsModal(pushState = true) {
             renderReviews();
-            if (pushState) history.pushState({ view: 'reviews' }, "", '#reviews');
+            if (pushState) {
+                history.pushState({ view: 'reviews' }, "", '#reviews');
+                hasInternalHistory = true;
+            }
             openModalDOM('reviewsModal', 'reviewsContent');
         }
 
         function openFAQModal(pushState = true) {
-            if (pushState) history.pushState({ view: 'faq' }, "", '#faq');
+            if (pushState) {
+                history.pushState({ view: 'faq' }, "", '#faq');
+                hasInternalHistory = true;
+            }
             openModalDOM('faqModal', 'faqContent');
         }
 
         function safeBack() {
-            if (currentPage > 1) {
+            // التمييز الذكي بين استخدام الرجوع لصفحة سابقة داخل الفلتر أو الخروج منه
+            if (hasInternalHistory) {
                 history.back();
             } else {
                 goHome(true);
@@ -1241,6 +1295,7 @@
             const hash = window.location.hash;
             closeAllModals();
 
+            // إذا كان الرجوع عاد بنا للرابط الأصلي تماماً (الرئيسية)
             if (!hash || hash === '' || hash === '#') {
                 document.getElementById('searchInput').value = "";
                 const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
@@ -1282,6 +1337,7 @@
             if (cat === 'discounts') title = "أحدث الخصومات والعروض";
             document.getElementById('gridTitle').innerText = title;
 
+            // استعادة عرض الصفحة المطلوبة بعد الرجوع (بدون إخفاء الفلاتر إن وجدت)
             handleFilterChange(true, cat === 'all', page, false);
         });
 
@@ -1302,12 +1358,10 @@
                         if (part.startsWith('cat=')) cat = part.replace('cat=', '');
                         if (part.startsWith('page=')) page = parseInt(part.replace('page=', '')) || 1;
                     });
-                    if (hash.startsWith('#cat=') && !hash.includes('&')) cat = hash.replace('#cat=', '');
-                    if (hash.startsWith('#page=') && !hash.includes('&')) page = parseInt(hash.replace('#page=', '')) || 1;
                 }
             }
 
-            if (!isModal && cat === 'all' && (!hash || !hash.includes('page'))) {
+            if (!isModal && cat === 'all' && (!hash || (!hash.includes('page') && !hash.includes('search')))) {
                 document.getElementById('searchInput').value = "";
                 const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
                 if (allPriceRadio) allPriceRadio.checked = true;
@@ -1392,5 +1446,3 @@
     </script>
 </body>
 </html>
-
-
