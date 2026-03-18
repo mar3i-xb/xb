@@ -272,50 +272,52 @@
             
             <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll relative">
                 
-                <!-- طلب مسبق (داخل النافذة) -->
-                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-[11px] sm:text-sm font-black px-4 py-2 rounded-xl mb-3 w-full flex items-center justify-center gap-2 shadow-sm">
+                <!-- طلب مسبق (داخل النافذة) تكبير الخط -->
+                <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-xs sm:text-base font-black px-4 py-2 rounded-xl mb-3 w-full flex items-center justify-center gap-2 shadow-sm">
                     <i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق
                 </div>
 
-                <h3 id="modalTitle" class="text-lg sm:text-3xl font-black text-white mb-3 leading-tight break-words"></h3>
+                <!-- عنوان اللعبة (تم التكبير) -->
+                <h3 id="modalTitle" class="text-xl sm:text-4xl font-black text-white mb-3 leading-tight break-words"></h3>
                 <div class="flex flex-wrap gap-2 mb-4 sm:mb-6" id="modalTags"></div>
                 
                 <div class="mb-4 sm:mb-6">
-                    <h4 class="text-[10px] sm:text-sm font-bold text-gray-500 mb-2 uppercase">وصف اللعبة</h4>
-                    <ul id="modalDesc" class="space-y-1 text-xs sm:text-base text-gray-300"></ul>
+                    <h4 class="text-sm sm:text-base font-bold text-gray-500 mb-2 uppercase">وصف اللعبة</h4>
+                    <ul id="modalDesc" class="space-y-1 text-sm sm:text-lg text-gray-300"></ul>
                 </div>
                 
                 <div class="mb-6">
-                    <h4 class="text-[10px] sm:text-sm font-bold text-gray-500 mb-2 uppercase">المميزات</h4>
-                    <ul id="modalFeatures" class="space-y-1.5 text-xs sm:text-base text-gray-300"></ul>
+                    <h4 class="text-sm sm:text-base font-bold text-gray-500 mb-2 uppercase">المميزات</h4>
+                    <ul id="modalFeatures" class="space-y-1.5 text-sm sm:text-lg text-gray-300"></ul>
                 </div>
                 
                 <div class="mt-auto pt-4 sm:pt-6 border-t border-[#2a2a2a]">
                     <div class="mb-4">
-                        <h4 class="text-[10px] sm:text-xs font-bold text-gray-500 mb-2 uppercase">طرق الدفع المتاحة:</h4>
+                        <h4 class="text-sm sm:text-base font-bold text-gray-500 mb-2 uppercase">طرق الدفع المتاحة:</h4>
                         <div class="flex flex-wrap gap-2">
-                            <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-[10px] sm:text-xs font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-xbox-main"></div> CliQ</span>
-                            <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-[10px] sm:text-xs font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> محافظ إلكترونية</span>
+                            <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-xs sm:text-sm font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-xbox-main"></div> CliQ</span>
+                            <span class="bg-[#0d0d0d] border border-[#333] px-2 py-1 rounded text-xs sm:text-sm font-bold text-gray-400 flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-blue-500"></div> محافظ إلكترونية</span>
                         </div>
                     </div>
                     
                     <div class="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-6 mb-4 sm:mb-6">
                         <div class="w-full sm:w-auto text-right">
-                            <div class="text-[10px] sm:text-sm text-gray-500 mb-1 flex flex-wrap items-center gap-2">
+                            <div class="text-sm sm:text-base text-gray-500 mb-1 flex flex-wrap items-center gap-2">
                                 السعر النهائي
-                                <span id="modalDiscountBadge" class="hidden bg-red-600 text-white text-[8px] sm:text-[10px] font-black px-1.5 py-0.5 rounded-md"></span>
+                                <span id="modalDiscountBadge" class="hidden bg-red-600 text-white text-[10px] sm:text-xs font-black px-1.5 py-0.5 rounded-md"></span>
                                 <!-- العداد التنازلي داخل النافذة -->
-                                <span id="modalTimerBadge" class="hidden bg-black/50 border border-gray-600 text-amber-400 text-[8px] sm:text-[10px] font-bold px-2 py-0.5 rounded-md flex items-center gap-1"></span>
+                                <span id="modalTimerBadge" class="hidden bg-black/50 border border-gray-600 text-amber-400 text-[10px] sm:text-xs font-bold px-2 py-0.5 rounded-md flex items-center gap-1"></span>
                             </div>
                             <div class="flex items-baseline gap-1.5">
-                                <span id="modalPrice" class="text-2xl sm:text-4xl font-black text-xbox-light"></span>
-                                <span class="text-xs sm:text-xl font-bold text-gray-400">JOD</span>
-                                <span id="modalOriginalPrice" class="text-[10px] sm:text-lg text-gray-600 line-through ml-2"></span>
+                                <span id="modalPrice" class="text-3xl sm:text-5xl font-black text-xbox-light"></span>
+                                <span class="text-sm sm:text-xl font-bold text-gray-400">JOD</span>
+                                <span id="modalOriginalPrice" class="text-xs sm:text-lg text-gray-600 line-through ml-2"></span>
                             </div>
                         </div>
                     </div>
                     
                     <div id="modalActionButtons" class="flex flex-col gap-2">
+                        <!-- بقيت الأزرار بنفس المقاس المطلوب -->
                         <button id="modalAddToCartBtn" class="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] border border-xbox-main hover:bg-xbox-main text-white px-4 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
                             إضافة إلى السلة <i class="fa-solid fa-cart-plus text-lg"></i>
                         </button>
@@ -508,7 +510,6 @@
 
         let CART = JSON.parse(localStorage.getItem('xb_cart')) || [];
         
-        // متغير تتبع الهيستوري الداخلي للموقع
         let hasInternalHistory = false;
 
         document.getElementById('storeLogo').src = LOGO_URL;
@@ -589,10 +590,33 @@
                         } else if (!isNaN(discountedPrice)) { finalP = discountedPrice; }
 
                         let clicks = parseInt(localStorage.getItem('game_clicks_' + index)) || Math.floor(Math.random() * 10);
-                        let isNewGame = row.is_new && (row.is_new.trim() === "نعم" || row.is_new.trim().toUpperCase() === "TRUE");
+                        
+                        let isNewGame = false;
+                        for (let key in row) {
+                            let cleanKey = key.trim().toLowerCase();
+                            if (cleanKey.includes('جديد') || cleanKey === 'is_new' || cleanKey === 'new') {
+                                let val = row[key] ? row[key].toString().trim().toUpperCase() : "";
+                                if (val === "TRUE" || val === "نعم" || val === "1") {
+                                    isNewGame = true;
+                                    break;
+                                }
+                            }
+                        }
+                        
                         let statusText = row.status && (row.status.trim() === "نفذت الكمية" || row.status.trim().toUpperCase() === "TRUE") ? "نفذت الكمية" : "";
 
-                        let isPreOrder = row['طلب مسبق'] && (row['طلب مسبق'].toString().trim().toUpperCase() === "TRUE" || row['طلب مسبق'].toString().trim() === "نعم");
+                        let isPreOrder = false;
+                        for (let key in row) {
+                            let cleanKey = key.trim().toLowerCase();
+                            if (cleanKey.includes('طلب') || cleanKey.includes('مسبق') || cleanKey === 'preorder') {
+                                let val = row[key] ? row[key].toString().trim().toUpperCase() : "";
+                                if (val === "TRUE" || val === "نعم" || val === "1") {
+                                    isPreOrder = true;
+                                    break;
+                                }
+                            }
+                        }
+
                         if (isPreOrder && targetDateMs && isExpired) {
                             isPreOrder = false; 
                         }
@@ -930,7 +954,7 @@
                 let wasHidden = document.getElementById('slidersSections').classList.contains('hidden');
 
                 if (hideSliders && !wasHidden && fromUserAction && currentCategoryContext === 'all') {
-                    history.pushState({ view: 'search' }, "", '#search');
+                    history.pushState({ view: 'search', page: targetPage }, "", '#search&page=' + targetPage);
                     hasInternalHistory = true;
                 }
 
@@ -1115,14 +1139,14 @@
             }
 
             const descArray = game.description ? game.description.split('|') : ["لا يوجد وصف."];
-            document.getElementById('modalDesc').innerHTML = descArray.map(d => `<li class="flex items-start gap-2 mb-1.5"><i class="fa-solid fa-circle text-[4px] sm:text-[6px] text-xbox-main mt-2 sm:mt-2.5 shrink-0"></i><span class="text-gray-300 leading-relaxed text-[11px] sm:text-base">${d.trim()}</span></li>`).join('');
+            document.getElementById('modalDesc').innerHTML = descArray.map(d => `<li class="flex items-start gap-2 mb-1.5"><i class="fa-solid fa-circle text-[6px] sm:text-[8px] text-xbox-main mt-2 sm:mt-2.5 shrink-0"></i><span class="text-gray-300 leading-relaxed text-sm sm:text-lg">${d.trim()}</span></li>`).join('');
 
             let tagsHtml = "";
-            if (game.type) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-sm font-bold bg-[#1a1a1a] text-xbox-light px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-xbox-main/30 whitespace-nowrap"><i class="fa-solid fa-key"></i>${game.type}</span>`;
-            if (game.isArabic) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-[9px] sm:text-sm font-bold bg-[#1a1a1a] text-blue-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-900/30 whitespace-nowrap"><i class="fa-solid fa-language"></i>ترجمة عربية</span>`;
+            if (game.type) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-bold bg-[#1a1a1a] text-xbox-light px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-xbox-main/30 whitespace-nowrap"><i class="fa-solid fa-key"></i>${game.type}</span>`;
+            if (game.isArabic) tagsHtml += `<span class="inline-flex items-center gap-1 sm:gap-1.5 text-xs sm:text-sm font-bold bg-[#1a1a1a] text-blue-400 px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg border border-blue-900/30 whitespace-nowrap"><i class="fa-solid fa-language"></i>ترجمة عربية</span>`;
             document.getElementById('modalTags').innerHTML = tagsHtml;
 
-            document.getElementById('modalFeatures').innerHTML = game.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-xbox-main shrink-0 text-[10px] sm:text-base"></i> <span class="text-gray-300 text-[11px] sm:text-base">${f.trim()}</span></li>`).join('');
+            document.getElementById('modalFeatures').innerHTML = game.features.map(f => `<li class="flex items-center gap-2"><i class="fa-solid fa-circle-check text-xbox-main shrink-0 text-xs sm:text-lg"></i> <span class="text-gray-300 text-sm sm:text-lg">${f.trim()}</span></li>`).join('');
 
             const actionsDiv = document.getElementById('modalActionButtons');
             const outOfStockDiv = document.getElementById('modalOutOfStockBtn');
@@ -1242,8 +1266,8 @@
         }
 
         function safeBack() {
-            // التمييز الذكي بين استخدام الرجوع لصفحة سابقة داخل الفلتر أو الخروج منه
-            if (hasInternalHistory) {
+            // التمييز الذكي للرجوع:
+            if (currentPage > 1) {
                 history.back();
             } else {
                 goHome(true);
@@ -1295,7 +1319,6 @@
             const hash = window.location.hash;
             closeAllModals();
 
-            // إذا كان الرجوع عاد بنا للرابط الأصلي تماماً (الرئيسية)
             if (!hash || hash === '' || hash === '#') {
                 document.getElementById('searchInput').value = "";
                 const allPriceRadio = document.querySelector('input[name="priceSort"][value="all"]');
@@ -1337,7 +1360,6 @@
             if (cat === 'discounts') title = "أحدث الخصومات والعروض";
             document.getElementById('gridTitle').innerText = title;
 
-            // استعادة عرض الصفحة المطلوبة بعد الرجوع (بدون إخفاء الفلاتر إن وجدت)
             handleFilterChange(true, cat === 'all', page, false);
         });
 
