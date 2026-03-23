@@ -1076,15 +1076,15 @@
             let orderText = "مرحباً، أريد طلب الألعاب التالية:\n\n";
             CART.forEach((item, idx) => {
                 total += item.price;
-                orderText += `${idx+1}. *${item.title}* السعر: ${item.price} JOD\n`;
-                if(item.type) orderText += `النوع: ${item.type}\n`;
+                orderText += `{idx+1}. *{item.title}* السعر: {item.price} JOD\n`;
+                if(item.type) orderText += `النوع: {item.type}\n`;
                 if(item.isArabic) orderText += "اللغة: تدعم العربية\n";
                 orderText += '\n';
             });
-            orderText += `المجموع الكلي: ${total} JOD\n`;
+            orderText += `المجموع الكلي: {total} JOD\n`;
 
             if(method === 'whatsapp') {
-                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderText)}`, '_blank');
+                window.open(`https://wa.me/{WHATSAPP_NUMBER}?text={encodeURIComponent(orderText)}`, '_blank');
             } else {
                 smartCopyAndOpenMessenger(orderText.replace(/\*/g, ''));
             }
