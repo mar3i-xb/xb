@@ -272,12 +272,11 @@
             
             <div class="md:w-3/5 p-5 sm:p-8 flex flex-col overflow-y-auto modal-scroll relative">
                 
-                <!-- طلب مسبق (داخل النافذة) تكبير الخط -->
+                <!-- طلب مسبق (داخل النافذة) -->
                 <div id="modalPreOrderBadge" class="hidden bg-gradient-to-r from-yellow-600/20 to-amber-500/20 border border-yellow-500/30 text-yellow-500 text-xs sm:text-base font-black px-4 py-2 rounded-xl mb-3 w-full flex items-center justify-center gap-2 shadow-sm">
                     <i class="fa-solid fa-clock-rotate-left"></i> طلب مسبق
                 </div>
 
-                <!-- عنوان اللعبة (تم التكبير) -->
                 <h3 id="modalTitle" class="text-xl sm:text-4xl font-black text-white mb-3 leading-tight break-words"></h3>
                 <div class="flex flex-wrap gap-2 mb-4 sm:mb-6" id="modalTags"></div>
                 
@@ -317,7 +316,6 @@
                     </div>
                     
                     <div id="modalActionButtons" class="flex flex-col gap-2">
-                        <!-- بقيت الأزرار بنفس المقاس المطلوب -->
                         <button id="modalAddToCartBtn" class="w-full flex items-center justify-center gap-2 bg-[#1a1a1a] border border-xbox-main hover:bg-xbox-main text-white px-4 py-2.5 sm:py-3 rounded-xl font-bold text-sm sm:text-base shadow-lg active:scale-95 transition-all outline-none">
                             إضافة إلى السلة <i class="fa-solid fa-cart-plus text-lg"></i>
                         </button>
@@ -478,7 +476,7 @@
         const LOGO_URL = "https://i.postimg.cc/k4mLTfP9/Whats-App-Image-2026-02-21-at-10-42-59-PM.png";
         const WHATSAPP_NUMBER = "962777276992";
         const MESSENGER_LINK = "https://m.me/Mohammad.Mar3i";
-        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p__MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
+        const GOOGLE_SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQNSSWf6xxoQOD8oxcKb-O9p2163kc2r9dNaxskckvq3p_MZ6oGcjaXXisbqSaUNNsmhjAZmV2OP9k/pub?output=csv";
         const ADMIN_EMAIL = "mar3i.xb@gmail.com";
 
         const ARABIC_DICTIONARY = {
@@ -1076,15 +1074,15 @@
             let orderText = "مرحباً، أريد طلب الألعاب التالية:\n\n";
             CART.forEach((item, idx) => {
                 total += item.price;
-                orderText += `{idx+1}. *{item.title}* السعر: {item.price} JOD\n`;
-                if(item.type) orderText += `النوع: {item.type}\n`;
+                orderText += `${idx+1}. *${item.title}* السعر: ${item.price} JOD\n`;
+                if(item.type) orderText += `النوع: ${item.type}\n`;
                 if(item.isArabic) orderText += "اللغة: تدعم العربية\n";
                 orderText += '\n';
             });
-            orderText += `المجموع الكلي: {total} JOD\n`;
+            orderText += `المجموع الكلي: ${total} JOD\n`;
 
             if(method === 'whatsapp') {
-                window.open(`https://wa.me/{WHATSAPP_NUMBER}?text={encodeURIComponent(orderText)}`, '_blank');
+                window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(orderText)}`, '_blank');
             } else {
                 smartCopyAndOpenMessenger(orderText.replace(/\*/g, ''));
             }
@@ -1161,9 +1159,11 @@
                 let extraInfo = "";
                 if(game.type) extraInfo += `%0Aالنوع: ${game.type}`;
                 if (game.isArabic) extraInfo += `%0Aاللغة: تدعم العربية`;
-                const buyMsg = `مرحباً، أريد شراء:\n*${game.title}*\nالسعر: $${displayPrice} دينار${extraInfo}`;
-
-                let msgTextPlain = `مرحباً، أريد شراء:\n${game.title}\nالسعر: $${displayPrice} دينار\n`;
+                
+                // إزالة علامة الـ $ من الرسائل
+                const buyMsg = `مرحباً، أريد شراء:\n*${game.title}*\nالسعر: ${displayPrice} دينار${extraInfo}`;
+                let msgTextPlain = `مرحباً، أريد شراء:\n${game.title}\nالسعر: ${displayPrice} دينار\n`;
+                
                 if(game.type) msgTextPlain += `النوع: ${game.type}\n`;
                 if (game.isArabic) msgTextPlain += `اللغة: تدعم العربية`;
 
@@ -1266,7 +1266,6 @@
         }
 
         function safeBack() {
-            // التمييز الذكي للرجوع:
             if (currentPage > 1) {
                 history.back();
             } else {
